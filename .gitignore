@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+
+# Сборка
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+
+# Инструменты
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+
+# Покрытие
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Секреты
+.env
+.env.*
+!.env.example
+*.local
+
+# Прочее
+*.log
+tmp/
+.tmp/
+*.sqlite3
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# ОС
+.DS_Store
+Thumbs.db
+desktop.ini
