@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from users.forms import UserSignInForm, UserSignUpForm
+from wishes.models import WishList
 
 if TYPE_CHECKING:
     from django.http.request import HttpRequest
@@ -25,6 +26,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = UserSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            WishList.objects.create(user=user, name="Мои желания")
             login(request, user)
             return HttpResponseRedirect(reverse("users:profile"))
     else:
