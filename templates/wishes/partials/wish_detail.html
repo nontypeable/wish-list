@@ -1,0 +1,36 @@
+{% if wish.image %}
+    <div class="wish-dialog__media">
+        <img class="wish-dialog__image" src="{{ wish.image.url }}" alt="{{ wish.name }}">
+    </div>
+{% endif %}
+<div class="wish-dialog__body">
+    <h2 class="wish-dialog__title" id="wish-detail-title">{{ wish.name }}</h2>
+    {% if wish.price is not None %}
+        <p class="wish-dialog__price">{{ wish.price|floatformat:"-2" }}&nbsp;₽</p>
+    {% endif %}
+    {% if wish.description %}
+        <div class="wish-dialog__description">{{ wish.description|linebreaksbr }}</div>
+    {% endif %}
+    {% if wish.where_can_buy %}
+        <div class="wish-dialog__store">
+            <h3>Где купить</h3>
+            <p>{{ wish.where_can_buy|urlize|linebreaksbr }}</p>
+        </div>
+    {% endif %}
+</div>
+<footer class="wish-dialog__footer">
+    {% if wish.fulfilled %}
+        <p class="wish-dialog__fulfilled">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
+            Желание исполнено
+        </p>
+    {% else %}
+        <form method="post" action="{% url 'wishes:fulfill_wish' wish.pk %}">
+            {% csrf_token %}
+            <button class="wish-dialog__fulfill" type="submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+                Отметить исполненным
+            </button>
+        </form>
+    {% endif %}
+</footer>

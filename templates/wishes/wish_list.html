@@ -28,26 +28,23 @@
             <ul class="wishes__list">
                 {% for wish in wishes %}
                     <li class="wish">
-                        {% if wish.image %}
-                            <img class="wish__image" src="{{ wish.image.url }}" alt="{{ wish.name }}" loading="lazy">
-                        {% endif %}
-                        <div class="wish__head">
-                            <h2 class="wish__name">{{ wish.name }}</h2>
-                            {% if wish.price is not None %}
-                                <span class="wish__price">{{ wish.price|floatformat:"-2" }}&nbsp;₽</span>
+                        <button class="wish__open" type="button" data-wish-open="wish-detail-{{ wish.pk }}" aria-haspopup="dialog" aria-controls="wish-details" aria-labelledby="wish-name-{{ wish.pk }}">
+                            {% if wish.image %}
+                                <img class="wish__image" src="{{ wish.image.url }}" alt="" loading="lazy">
                             {% endif %}
-                        </div>
-
-                        {% if wish.description %}
-                            <p class="wish__text">{{ wish.description|linebreaksbr }}</p>
-                        {% endif %}
-
-                        {% if wish.where_can_buy %}
-                            <p class="wish__store">
-                                <span class="wish__store-label">Где купить:</span>
-                                {{ wish.where_can_buy|urlize|linebreaksbr }}
-                            </p>
-                        {% endif %}
+                            <span class="wish__head">
+                                <span class="wish__name" id="wish-name-{{ wish.pk }}">{{ wish.name }}</span>
+                                {% if wish.price is not None %}
+                                    <span class="wish__price">{{ wish.price|floatformat:"-2" }}&nbsp;₽</span>
+                                {% endif %}
+                            </span>
+                            {% if wish.description %}
+                                <span class="wish__text">{{ wish.description }}</span>
+                            {% endif %}
+                        </button>
+                        <template id="wish-detail-{{ wish.pk }}">
+                            {% include "wishes/partials/wish_detail.html" %}
+                        </template>
                     </li>
                 {% endfor %}
             </ul>
@@ -63,4 +60,11 @@
             </div>
         {% endif %}
     </div>
+    <dialog class="wish-dialog" id="wish-details" aria-labelledby="wish-detail-title">
+        <button class="wish-dialog__close" type="button" data-wish-close aria-label="Закрыть" autofocus>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+        <div class="wish-dialog__content" data-wish-content></div>
+    </dialog>
+    <script src="{% static 'js/wish-dialog.js' %}" defer></script>
 {% endblock %}

@@ -2,8 +2,9 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 
 from wishes.forms import CreateWishForm
 from wishes.models import Wish, WishList
@@ -45,8 +46,9 @@ def create_wish(request: HttpRequest) -> HttpResponse:
 
 
 @login_required(login_url=reverse_lazy("users:login"))
+@require_POST
 def fulfill_wish(request: HttpRequest, wish: int) -> HttpResponse:
-    wish = Wish.objects.get(id=wish)
-    wish.fulfilled = True
-    wish.save()
+    selected_wish = get_object_or_404(Wish, id=wish, wish_list__user=request.user)
+    selected_wish.fulfilled = True
+    selected_wish.save(update_fields=["fulfilled"])
     return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
