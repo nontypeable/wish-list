@@ -16,6 +16,7 @@ class WishList(models.Model):
 
 class Wish(models.Model):
     name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="wishes/", null=True, blank=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     where_can_buy = models.TextField(blank=True)
