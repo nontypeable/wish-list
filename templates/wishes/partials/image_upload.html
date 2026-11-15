@@ -1,0 +1,20 @@
+<div class="image-upload" data-image-upload role="group" aria-label="Добавление изображения" tabindex="0" aria-describedby="{{ field.auto_id }}_upload-help">
+    <div class="image-upload__hint" id="{{ field.auto_id }}_upload-help">
+        <strong class="image-upload__title">Перетащите картинку сюда</strong>
+        <span class="image-upload__paste">
+            <span>или вставьте</span>
+            <kbd>Ctrl + V</kbd>
+            <span aria-hidden="true">/</span>
+            <kbd>⌘ + V</kbd>
+        </span>
+        <p class="image-upload__alternative">Или выберите файл кнопкой ниже</p>
+    </div>
+    <div class="image-upload__file-control">
+        {{ field }}
+        <span class="image-upload__pick" aria-hidden="true">Выбрать файл</span>
+        <span class="image-upload__filename" data-image-filename aria-hidden="true">Файл не выбран</span>
+    </div>
+    <img class="image-upload__preview" data-image-preview alt="Предпросмотр выбранного изображения" hidden>
+    <button class="image-upload__remove" data-image-remove type="button" hidden>Убрать картинку</button>
+    <p class="image-upload__status" data-image-status role="status" aria-live="polite"></p>
+</div>

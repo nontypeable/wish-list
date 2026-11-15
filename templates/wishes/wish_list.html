@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Мои желания{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/wishes.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wishes wishes--wide">
+        <header class="wishes__header">
+            <h1 class="wishes__title">Мои желания</h1>
+            {% if wishes %}
+                <a href="{% url 'wishes:create_wish' %}" class="wishes__button">Добавить желание</a>
+            {% endif %}
+        </header>
+
+        {% if wishes %}
+            <ul class="wishes__list">
+                {% for wish in wishes %}
+                    <li class="wish">
+                        {% if wish.image %}
+                            <img class="wish__image" src="{{ wish.image.url }}" alt="{{ wish.name }}" loading="lazy">
+                        {% endif %}
+                        <div class="wish__head">
+                            <h2 class="wish__name">{{ wish.name }}</h2>
+                            {% if wish.price is not None %}
+                                <span class="wish__price">{{ wish.price|floatformat:"-2" }}&nbsp;₽</span>
+                            {% endif %}
+                        </div>
+
+                        {% if wish.description %}
+                            <p class="wish__text">{{ wish.description|linebreaksbr }}</p>
+                        {% endif %}
+
+                        {% if wish.where_can_buy %}
+                            <p class="wish__store">
+                                <span class="wish__store-label">Где купить:</span>
+                                {{ wish.where_can_buy|urlize|linebreaksbr }}
+                            </p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="wishes__empty">
+                <p>В списке пока ничего нет.</p>
+                <a href="{% url 'wishes:create_wish' %}" class="wishes__button">Добавить первое желание</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
