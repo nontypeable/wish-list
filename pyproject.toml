@@ -23,30 +23,36 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py314"
+extend-exclude = ["*/migrations/*"]
+force-exclude = true
 
 [tool.ruff.lint]
 select = [
-    "E", "W",        # pycodestyle
-    "F",             # pyflakes
-    "DJ",            # flake8-django
-    "I",             # порядок сортировки импортов
-    "B",             # bugbear
-    "UP",            # устаревший синтаксис
-    "SIM", "C4",     # упрощения
-    "RUF",           # собственные правила ruff
-    "PL",            # pylint-правила
-    "S",             # безопасность
-    "ASYNC",         # ошибки в async функциях
-    "PT",            # единый стиль pytest
-    "TC",            # импорты только для типов
-    "ANN",           # аннотации типов
-    "ERA",           # закомментированный код
-    "T20",           # забытые print() и pprint()
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "DJ",        # flake8-django
+    "I",         # порядок сортировки импортов
+    "B",         # bugbear
+    "UP",        # устаревший синтаксис
+    "SIM", "C4", # упрощения
+    "RUF",       # собственные правила ruff
+    "PL",        # pylint-правила
+    "S",         # безопасность
+    "ASYNC",     # ошибки в async функциях
+    "PT",        # единый стиль pytest
+    "TC",        # импорты только для типов
+    "ANN",       # аннотации типов
+    "ERA",       # закомментированный код
+    "T20",       # забытые print() и pprint()
 ]
+ignore = ["RUF001", "RUF002", "RUF003"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "PLR2004"] # игнорировать assert и магические числа в тестах
-"manage.py" = ["PLC0415"]         # импорт внутри main() — так генерирует Django
+"tests/**" = ["S101", "PLR2004"] # игнорировать assert и магические значения в тестах
+"manage.py" = ["PLC0415"]        # импорт внутри main() — так генерирует Django
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true # разрешить *args: Any и **kwargs: Any
 
 [tool.ruff.format]
 docstring-code-format = true

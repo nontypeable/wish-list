@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Вход{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="auth">
+        <h1 class="auth__title">Вход</h1>
+
+        <form method="post" class="auth__form" novalidate>
+            {% csrf_token %}
+            {% include "users/partials/form_fields.html" %}
+            <button type="submit" class="auth__submit">Войти</button>
+        </form>
+
+        <p class="auth__alt">Нет аккаунта? <a href="{% url 'users:sign_up' %}">Зарегистрироваться</a></p>
+    </div>
+{% endblock %}
