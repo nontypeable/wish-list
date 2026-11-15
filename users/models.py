@@ -51,11 +51,11 @@ class UserManager(BaseUserManager["User"]):
     ) -> User:
         extra_fields.setdefault("is_staff", True)
         if not extra_fields.get("is_staff"):
-            raise ValueError("Superuser must have is_staff=True.")
+            raise ValidationError("Superuser must have is_staff=True.")
 
         extra_fields.setdefault("is_superuser", True)
         if not extra_fields.get("is_superuser"):
-            raise ValueError("Superuser must have is_superuser=True.")
+            raise ValidationError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, username, first_name, last_name, **extra_fields)
 
