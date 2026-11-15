@@ -1,0 +1,124 @@
+.profile {
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 10vh, 6rem) 1rem 3rem;
+}
+
+.profile__card {
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.profile__card + .profile__card {
+    margin-top: 1.25rem;
+}
+
+.profile__section-title {
+    margin: 0 0 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Поля (.field) берутся из auth.css */
+.profile__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.profile__form > * {
+    grid-column: 1 / -1;
+}
+
+.profile__form > .field--first_name,
+.profile__form > .field--last_name {
+    grid-column: auto;
+}
+
+.profile__button {
+    justify-self: start;
+    margin-top: 0.25rem;
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.profile__button:hover {
+    background: var(--accent-hover);
+}
+
+.profile__sign-out {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.profile__sign-out button {
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--error);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.profile__sign-out button:hover {
+    border-color: var(--error);
+}
+
+.profile__name {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.profile__username {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted);
+}
+
+.profile__details {
+    margin: 1.5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    gap: 1rem;
+}
+
+.profile__details dt {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.profile__details dd {
+    margin: 0.125rem 0 0;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 30rem) {
+    .profile {
+        padding-top: 1.5rem;
+    }
+
+    .profile__card {
+        padding: 1.25rem;
+    }
+
+    .profile__form > .field--first_name,
+    .profile__form > .field--last_name {
+        grid-column: 1 / -1;
+    }
+
+    .profile__button {
+        justify-self: stretch;
+    }
+}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="profile">
+        <section class="profile__card">
+            <h1 class="profile__name">{{ user.first_name }} {{ user.last_name }}</h1>
+            <p class="profile__username">@{{ user.username }}</p>
+
+            <dl class="profile__details">
+                <div>
+                    <dt>Электронная почта</dt>
+                    <dd>{{ user.email }}</dd>
+                </div>
+                <div>
+                    <dt>На сайте с</dt>
+                    <dd>{{ user.created_at|date:"j E Y" }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        {# TODO: сделать обработку формы #}
+        <section class="profile__card">
+            <h2 class="profile__section-title">Личные данные</h2>
+
+            <form method="post" class="profile__form">
+                {% csrf_token %}
+                <div class="field field--first_name">
+                    <label for="id_first_name">Имя</label>
+                    <input type="text" name="first_name" id="id_first_name" value="{{ user.first_name }}" maxlength="255" autocomplete="given-name" required>
+                </div>
+                <div class="field field--last_name">
+                    <label for="id_last_name">Фамилия</label>
+                    <input type="text" name="last_name" id="id_last_name" value="{{ user.last_name }}" maxlength="255" autocomplete="family-name" required>
+                </div>
+                <div class="field">
+                    <label for="id_username">Имя пользователя</label>
+                    <input type="text" name="username" id="id_username" value="{{ user.username }}" maxlength="255" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label for="id_email">Электронная почта</label>
+                    <input type="email" name="email" id="id_email" value="{{ user.email }}" autocomplete="email" required>
+                </div>
+                <button type="submit" class="profile__button">Сохранить изменения</button>
+            </form>
+        </section>
+
+        {# TODO: сделать обработку формы #}
+        <section class="profile__card">
+            <h2 class="profile__section-title">Пароль</h2>
+
+            <form method="post" class="profile__form">
+                {% csrf_token %}
+                <div class="field">
+                    <label for="id_old_password">Текущий пароль</label>
+                    <input type="password" name="old_password" id="id_old_password" autocomplete="current-password" required>
+                </div>
+                <div class="field">
+                    <label for="id_new_password1">Новый пароль</label>
+                    <input type="password" name="new_password1" id="id_new_password1" autocomplete="new-password" required>
+                </div>
+                <div class="field">
+                    <label for="id_new_password2">Подтверждение нового пароля</label>
+                    <input type="password" name="new_password2" id="id_new_password2" autocomplete="new-password" required>
+                </div>
+                <button type="submit" class="profile__button">Сменить пароль</button>
+            </form>
+        </section>
+
+        {# TODO: сделать обработку формы #}
+        <form method="post" class="profile__sign-out">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+    </div>
+{% endblock %}
