@@ -1,0 +1,336 @@
+.wishes {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 10vh, 6rem) 1rem 3rem;
+}
+
+.wishes--narrow {
+    max-width: 28rem;
+}
+
+.wishes--wide {
+    max-width: 90rem;
+    padding-inline: clamp(1rem, 3vw, 3rem);
+}
+
+.wishes__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.wishes__title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.wishes--narrow .wishes__title {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Кнопка и ссылка-кнопка выглядят одинаково */
+.wishes__button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    background: var(--accent);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.wishes__button:hover {
+    color: #fff;
+    background: var(--accent-hover);
+}
+
+.wishes__list {
+    column-width: 18rem;
+    column-gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wish {
+    break-inside: avoid;
+    min-width: 0;
+    margin-bottom: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.wish__image {
+    display: block;
+    width: 100%;
+    height: 14rem;
+    margin-bottom: 1rem;
+    object-fit: contain;
+    background: var(--bg);
+    border-radius: 6px;
+}
+
+.wish__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.375rem 1rem;
+}
+
+.wish__name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.wish__price {
+    flex-shrink: 0;
+    font-weight: 600;
+}
+
+.wish__text {
+    margin: 0.5rem 0 0;
+    overflow-wrap: anywhere;
+}
+
+.wish__store {
+    margin: 0.75rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+}
+
+.wish__store-label {
+    margin-right: 0.25rem;
+}
+
+.wishes__empty {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.wishes__empty p {
+    margin: 0 0 1.25rem;
+}
+
+/* Форма создания */
+.wish-form {
+    display: grid;
+    gap: 1rem;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.wish-form .wishes__button {
+    margin-top: 0.5rem;
+}
+
+.wish-form .field {
+    min-width: 0;
+}
+
+.wish-form input[type="file"] {
+    padding: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.wish-form input[type="file"]::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.wish-form input[type="file"]::file-selector-button:hover {
+    background: var(--accent-hover);
+}
+
+.wishes__back {
+    margin: 1.25rem 0 0;
+    text-align: center;
+    font-size: 0.9375rem;
+}
+
+.image-upload {
+    padding: 0.75rem;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+}
+
+.image-upload--dragging {
+    background: rgb(59 91 219 / 0.08);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(59 91 219 / 0.2);
+}
+
+.image-upload__file-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.375rem;
+    font-size: 0.875rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.image-upload__file-control input[type="file"] {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    padding: 0;
+    opacity: 0;
+}
+
+.image-upload__file-control:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(59 91 219 / 0.2);
+}
+
+.field--invalid .image-upload__file-control {
+    border-color: var(--error);
+}
+
+.image-upload__pick {
+    flex-shrink: 0;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.image-upload__file-control:hover .image-upload__pick {
+    background: var(--accent-hover);
+}
+
+.image-upload__filename {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 0.5rem;
+    overflow: hidden;
+    color: var(--text-muted);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.image-upload__hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.image-upload__title {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.image-upload__paste {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+}
+
+.image-upload__paste kbd {
+    padding: 0.125rem 0.375rem;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+}
+
+.image-upload__alternative {
+    margin: 0.5rem 0 0;
+    font-size: 0.75rem;
+}
+
+.image-upload__preview {
+    display: block;
+    width: 100%;
+    max-height: 12rem;
+    margin-top: 0.75rem;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.image-upload__remove {
+    display: block;
+    margin: 0.5rem auto 0;
+    padding: 0.25rem 0;
+    font: inherit;
+    font-size: 0.8125rem;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+}
+
+.image-upload__status {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+}
+
+.image-upload__status:empty,
+.image-upload [hidden] {
+    display: none;
+}
+
+@media (max-width: 30rem) {
+    .wishes {
+        padding-top: 1.5rem;
+    }
+
+    .wishes__header .wishes__button {
+        width: 100%;
+    }
+
+    .wish {
+        padding: 1rem;
+    }
+
+    .wish-form {
+        padding: 1.25rem;
+    }
+}
