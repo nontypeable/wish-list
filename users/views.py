@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -25,8 +26,9 @@ def sign_up(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserSignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            WishList.objects.create(user=user, name="Мои желания")
+            with transaction.atomic():
+                user = form.save()
+                WishList.objects.create(user=user, name="Мои желания")
             login(request, user)
             if next := request.GET.get("next"):
                 return redirect(next)
