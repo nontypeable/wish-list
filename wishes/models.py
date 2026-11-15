@@ -20,6 +20,7 @@ class Wish(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     where_can_buy = models.TextField(blank=True)
+    fulfilled = models.BooleanField(default=False)
     who_booked = models.ForeignKey(
         User, on_delete=models.SET_NULL, related_name="booked_wishes", blank=True, null=True
     )
