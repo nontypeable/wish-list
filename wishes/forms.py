@@ -1,11 +1,16 @@
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from django import forms
 
 from .models import Wish
 
+if TYPE_CHECKING:
+    BaseWishForm = forms.ModelForm[Wish]
+else:
+    BaseWishForm = forms.ModelForm
 
-class CreateWishForm(forms.ModelForm):
+
+class CreateWishForm(BaseWishForm):
     class Meta:
         model = Wish
         fields: ClassVar[tuple[str, ...]] = (

@@ -12,9 +12,14 @@ from wishes.models import Wish, WishList
 if TYPE_CHECKING:
     from django.http.request import HttpRequest
 
+    from users.models import User
+
+    class AuthenticatedHttpRequest(HttpRequest):
+        user: User
+
 
 @login_required(login_url=reverse_lazy("users:sign_in"))
-def get_wish_list(request: HttpRequest) -> HttpResponse:
+def get_wish_list(request: AuthenticatedHttpRequest) -> HttpResponse:
     wishes = Wish.objects.filter(wish_list__user=request.user)
     show_fulfilled = request.GET.get("status") == "fulfilled"
     return render(
@@ -30,13 +35,12 @@ def get_wish_list(request: HttpRequest) -> HttpResponse:
 
 
 @login_required(login_url=reverse_lazy("users:sign_in"))
-def create_wish(request: HttpRequest) -> HttpResponse:
+def create_wish(request: AuthenticatedHttpRequest) -> HttpResponse:
     user = request.user
     if request.method == "POST":
         form = CreateWishForm(request.POST, request.FILES)
         if form.is_valid():
             wish = form.save(commit=False)
-            wish.user = user
             wish.wish_list = WishList.objects.get(user=user)
             wish.save()
             return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
@@ -47,7 +51,7 @@ def create_wish(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url=reverse_lazy("users:sign_in"))
 @require_POST
-def fulfill_wish(request: HttpRequest, wish: int) -> HttpResponse:
+def fulfill_wish(request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
     selected_wish = get_object_or_404(Wish, id=wish, wish_list__user=request.user)
     selected_wish.fulfilled = True
     selected_wish.save(update_fields=["fulfilled"])
