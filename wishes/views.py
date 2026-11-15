@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from django.http.request import HttpRequest
 
 
-@login_required(login_url=reverse_lazy("users:login"))
+@login_required(login_url=reverse_lazy("users:sign_in"))
 def get_wish_list(request: HttpRequest) -> HttpResponse:
     wishes = Wish.objects.filter(wish_list__user=request.user)
     show_fulfilled = request.GET.get("status") == "fulfilled"
@@ -29,7 +29,7 @@ def get_wish_list(request: HttpRequest) -> HttpResponse:
     )
 
 
-@login_required(login_url=reverse_lazy("users:login"))
+@login_required(login_url=reverse_lazy("users:sign_in"))
 def create_wish(request: HttpRequest) -> HttpResponse:
     user = request.user
     if request.method == "POST":
@@ -45,7 +45,7 @@ def create_wish(request: HttpRequest) -> HttpResponse:
     return render(request, "wishes/create_wish.html", {"form": form})
 
 
-@login_required(login_url=reverse_lazy("users:login"))
+@login_required(login_url=reverse_lazy("users:sign_in"))
 @require_POST
 def fulfill_wish(request: HttpRequest, wish: int) -> HttpResponse:
     selected_wish = get_object_or_404(Wish, id=wish, wish_list__user=request.user)
