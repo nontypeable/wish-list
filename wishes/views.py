@@ -14,10 +14,18 @@ if TYPE_CHECKING:
 
 @login_required(login_url=reverse_lazy("users:login"))
 def get_wish_list(request: HttpRequest) -> HttpResponse:
-    user = request.user
-    wish_list = WishList.objects.get(user=user)
-    wishes = Wish.objects.all().filter(wish_list=wish_list.id)
-    return render(request, "wishes/wish_list.html", {"wishes": wishes})
+    wishes = Wish.objects.filter(wish_list__user=request.user)
+    show_fulfilled = request.GET.get("status") == "fulfilled"
+    return render(
+        request,
+        "wishes/wish_list.html",
+        {
+            "wishes": wishes.filter(fulfilled=show_fulfilled),
+            "show_fulfilled": show_fulfilled,
+            "active_count": wishes.filter(fulfilled=False).count(),
+            "fulfilled_count": wishes.filter(fulfilled=True).count(),
+        },
+    )
 
 
 @login_required(login_url=reverse_lazy("users:login"))
@@ -34,3 +42,11 @@ def create_wish(request: HttpRequest) -> HttpResponse:
     else:
         form = CreateWishForm()
     return render(request, "wishes/create_wish.html", {"form": form})
+
+
+@login_required(login_url=reverse_lazy("users:login"))
+def fulfill_wish(request: HttpRequest, wish: int) -> HttpResponse:
+    wish = Wish.objects.get(id=wish)
+    wish.fulfilled = True
+    wish.save()
+    return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
