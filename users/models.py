@@ -61,15 +61,15 @@ class UserManager(BaseUserManager["User"]):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = fields.EmailField(verbose_name="Email", unique=True)
+    email = fields.EmailField(verbose_name="Электронная почта", unique=True)
     username = fields.CharField(
-        verbose_name="Username",
+        verbose_name="Имя пользователя",
         max_length=255,
         unique=True,
         validators=[UnicodeUsernameValidator()],
     )
-    first_name = fields.CharField(verbose_name="First Name", max_length=255)
-    last_name = fields.CharField(verbose_name="Last Name", max_length=255)
+    first_name = fields.CharField(verbose_name="Имя", max_length=255)
+    last_name = fields.CharField(verbose_name="Фамилия", max_length=255)
 
     is_active = fields.BooleanField(default=True)
     is_staff = fields.BooleanField(default=False)
