@@ -38,7 +38,8 @@
     font-weight: 500;
 }
 
-.field input {
+.field input,
+.field textarea {
     width: 100%;
     padding: 0.5rem 0.75rem;
     font: inherit;
@@ -48,13 +49,20 @@
     border-radius: 6px;
 }
 
-.field input:focus-visible {
+.field textarea {
+    height: 6rem;
+    resize: vertical;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgb(59 91 219 / 0.2);
 }
 
-.field--invalid input {
+.field--invalid input,
+.field--invalid textarea {
     border-color: var(--error);
 }
 

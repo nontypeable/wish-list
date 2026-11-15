@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Новое желание{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/wishes.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wishes wishes--narrow">
+        <h1 class="wishes__title">Новое желание</h1>
+
+        <form method="post" enctype="multipart/form-data" class="wish-form" novalidate>
+            {% csrf_token %}
+            {% include "users/partials/form_fields.html" with image_upload=True %}
+            <button type="submit" class="wishes__button">Добавить желание</button>
+        </form>
+
+        <p class="wishes__back"><a href="{% url 'wishes:get_wish_list' %}">К списку желаний</a></p>
+    </div>
+    <script src="{% static 'js/wish-image-upload.js' %}" defer></script>
+{% endblock %}

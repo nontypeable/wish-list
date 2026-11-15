@@ -38,6 +38,7 @@ AUTH_USER_MODEL = "users.User"
 
 INSTALLED_APPS = [
     "users.apps.UsersConfig",
+    "wishes.apps.WishesConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
