@@ -41,6 +41,7 @@ htmlcov/
 tmp/
 .tmp/
 *.sqlite3
+media/
 
 # IDE
 .idea/
