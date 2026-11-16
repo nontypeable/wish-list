@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}wish — место для ваших желаний{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="home">
+        <section class="home__hero" aria-labelledby="home-title">
+            <div class="home__intro">
+                <h1 id="home-title">Для больших планов и маленьких радостей.</h1>
+                <p class="home__description">Соберите то, о чём мечтаете, и поделитесь списком с теми, кто хочет вас порадовать.</p>
+                <div class="home__actions">
+                    {% if user.is_authenticated %}
+                        <a class="home__button" href="{% url 'wishes:get_wish_list' %}">Мой вишлист</a>
+                        <a class="home__secondary" href="{% url 'wishes:shared_wishlists' %}">Доступные мне</a>
+                    {% else %}
+                        <a class="home__button" href="{% url 'users:sign_up' %}">Создать вишлист</a>
+                        <a class="home__secondary" href="{% url 'users:sign_in' %}">Уже есть аккаунт? Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="home__illustration" aria-hidden="true">
+                <div class="home__gift-scene">
+                    <svg class="home__gift" width="280" height="280" viewBox="0 0 160 160" fill="none">
+                        <path d="M30 90h100v45a15 15 0 0 1-15 15H45a15 15 0 0 1-15-15V90Z" fill="currentColor"/>
+                        <path d="M72.5 90h15v60h-15z" fill="white"/>
+                        <g transform="rotate(-9 80 60)">
+                            <path d="M80 50c-15 0-35-5-35-20a12.5 12.5 0 0 1 24-4.5L80 50Zm0 0c15 0 35-5 35-20a12.5 12.5 0 0 0-24-4.5L80 50Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
+                            <rect x="20" y="52.5" width="120" height="25" rx="7.5" fill="currentColor"/>
+                            <path d="M72.5 52.5h15v25h-15z" fill="white"/>
+                        </g>
+                    </svg>
+                    <svg class="home__spark home__spark--top" width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2c0 8-4 12-12 12 8 0 12 4 12 12 0-8 4-12 12-12-8 0-12-4-12-12Z" fill="currentColor"/></svg>
+                    <svg class="home__spark home__spark--side" width="16" height="16" viewBox="0 0 28 28" fill="none"><path d="M14 2c0 8-4 12-12 12 8 0 12 4 12 12 0-8 4-12 12-12-8 0-12-4-12-12Z" fill="currentColor"/></svg>
+                    <span class="home__gift-shadow"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="home__how" aria-label="Как работает wish">
+            <article class="home__feature">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5h11v16H5V5h3"/><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M9 11h6M9 15h6"/></svg>
+                <h2>Соберите желания</h2>
+                <p>Книга, путешествие или что-то особенное. Добавьте фото и ссылку, чтобы проще было найти.</p>
+            </article>
+            <article class="home__feature">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M17 4a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v2"/></svg>
+                <h2>Поделитесь с близкими</h2>
+                <p>Пригласите тех, кому хотите открыть свой список. И заглядывайте в их вишлисты.</p>
+            </article>
+            <article class="home__feature">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 21-8-8a5 5 0 0 1 8-6 5 5 0 0 1 8 6l-8 8Z"/></svg>
+                <h2>Радуйте друг друга</h2>
+                <p>Выбирайте подарки, которые точно ждут. А сбывшиеся желания отмечайте исполненными.</p>
+            </article>
+        </section>
+    </div>
+{% endblock %}

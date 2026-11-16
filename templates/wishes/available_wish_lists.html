@@ -4,7 +4,6 @@
 {% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
 {% block content %}
     <div class="wishes wishes--wide">
-        {% include "wishes/partials/list_navigation.html" with current_section="shared" %}
         <header class="wishes__header"><div><h1 class="wishes__title">Доступные мне</h1><p class="sharing-copy">Люди, которые поделились с вами своими желаниями</p></div></header>
         <ul class="sharing-lists">
             {% for shared_list in shared_wish_lists %}
