@@ -1,10 +1,25 @@
+from typing import TYPE_CHECKING
+
 from django.contrib import admin
 
 from wishes.models import AvailableWishList, Wish, WishList, WishListInvitation
 
+if TYPE_CHECKING:
+    BaseWishAdmin = admin.ModelAdmin[Wish]
+    BaseWishInline = admin.TabularInline[Wish, WishList]
+    BaseWishListAdmin = admin.ModelAdmin[WishList]
+    BaseInvitationAdmin = admin.ModelAdmin[WishListInvitation]
+    BaseAccessAdmin = admin.ModelAdmin[AvailableWishList]
+else:
+    BaseWishAdmin = admin.ModelAdmin
+    BaseWishInline = admin.TabularInline
+    BaseWishListAdmin = admin.ModelAdmin
+    BaseInvitationAdmin = admin.ModelAdmin
+    BaseAccessAdmin = admin.ModelAdmin
+
 
 @admin.register(Wish)
-class WishAdmin(admin.ModelAdmin):
+class WishAdmin(BaseWishAdmin):
     list_display = ("id", "name", "price", "fulfilled", "wish_list__user__email")
     list_display_links = ("id", "name")
     list_filter = ("fulfilled",)
@@ -28,7 +43,7 @@ class WishAdmin(admin.ModelAdmin):
     )
 
 
-class WishInline(admin.TabularInline):
+class WishInline(BaseWishInline):
     model = Wish
     fields = ("id", "name", "price", "fulfilled")
     readonly_fields = ("id", "name", "price", "fulfilled")
@@ -37,21 +52,21 @@ class WishInline(admin.TabularInline):
 
 
 @admin.register(WishList)
-class WishListAdmin(admin.ModelAdmin):
+class WishListAdmin(BaseWishListAdmin):
     list_display = ("id", "name", "user__email")
     list_display_links = ("id", "name")
     search_fields = ("name", "user__email")
     inlines = (WishInline,)
     ordering = ("-id",)
     list_per_page = 50
-    fieldset = (
-        ("Информация", {"fields": ("name")}),
-        ("Владелец", {"fields": ("user")}),
+    fieldsets = (
+        ("Информация", {"fields": ("name",)}),
+        ("Владелец", {"fields": ("user",)}),
     )
 
 
 @admin.register(WishListInvitation)
-class WishListInvitationAdmin(admin.ModelAdmin):
+class WishListInvitationAdmin(BaseInvitationAdmin):
     list_display = ("id", "invited_email", "wish_list__user__email", "accepted_at")
     search_fields = ("invited_email", "wish_list__user__email")
     ordering = ("-id",)
@@ -59,7 +74,7 @@ class WishListInvitationAdmin(admin.ModelAdmin):
 
 
 @admin.register(AvailableWishList)
-class AvailableWishListAdmin(admin.ModelAdmin):
+class AvailableWishListAdmin(BaseAccessAdmin):
     list_display = ("id", "wish_list__user__email", "user__email")
     ordering = ("-id",)
     list_per_page = 50
