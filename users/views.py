@@ -7,6 +7,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views import View
 
 from users.forms import UserSignInForm, UserSignUpForm
 from wishes.models import WishList
@@ -24,16 +25,24 @@ def _redirect_after_auth(request: HttpRequest) -> HttpResponse:
     return redirect("users:profile")
 
 
-@login_required(login_url=reverse_lazy("users:sign_in"))
-def profile(request: HttpRequest) -> HttpResponse:
-    return render(request, "users/profile.html", {"user": request.user})
+class UserProfile(View):
+    @login_required(login_url=reverse_lazy("users:sign_in"))
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, "users/profile.html", {"user": request.user})
 
 
-def sign_up(request: HttpRequest) -> HttpResponse:
-    if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse_lazy("users:profile"))
+class UserSignUp(View):
+    async def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("users:profile"))
 
-    if request.method == "POST":
+        form = UserSignUpForm()
+        return render(request, "users/sign_up.html", {"form": form})
+
+    async def post(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("users:profile"))
+
         form = UserSignUpForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
@@ -41,16 +50,21 @@ def sign_up(request: HttpRequest) -> HttpResponse:
                 WishList.objects.create(user=user, name="Мои желания")
             login(request, user)
             return _redirect_after_auth(request)
-    else:
-        form = UserSignUpForm()
-    return render(request, "users/sign_up.html", {"form": form})
+        return render(request, "users/sign_up.html", {"form": form})
 
 
-def sign_in(request: HttpRequest) -> HttpResponse:
-    if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse_lazy("users:profile"))
+class UserSignIn(View):
+    async def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("users:profile"))
 
-    if request.method == "POST":
+        form = UserSignInForm()
+        return render(request, "users/sign_in.html", {"form": form})
+
+    async def post(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("users:profile"))
+
         form = UserSignInForm(request.POST)
         if form.is_valid():
             user = authenticate(
@@ -60,6 +74,4 @@ def sign_in(request: HttpRequest) -> HttpResponse:
                 login(request, user)
                 return _redirect_after_auth(request)
             form.add_error(None, "Неверная электронная почта или пароль.")
-    else:
-        form = UserSignInForm()
-    return render(request, "users/sign_in.html", {"form": form})
+        return render(request, "users/sign_in.html", {"form": form})
