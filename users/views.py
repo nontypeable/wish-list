@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -25,8 +25,9 @@ def _redirect_after_auth(request: HttpRequest) -> HttpResponse:
     return redirect("users:profile")
 
 
-class UserProfile(View):
-    @login_required(login_url=reverse_lazy("users:sign_in"))
+class UserProfile(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, "users/profile.html", {"user": request.user})
 

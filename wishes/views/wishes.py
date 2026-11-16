@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -18,8 +18,9 @@ if TYPE_CHECKING:
         user: User
 
 
-class GetWishList(View):
-    @login_required(login_url=reverse_lazy("users:sign_in"))
+class GetWishList(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
     async def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         wishes = Wish.objects.filter(wish_list__user=request.user)
         show_fulfilled = request.GET.get("status") == "fulfilled"
@@ -35,13 +36,13 @@ class GetWishList(View):
         )
 
 
-class CreateWish(View):
-    @login_required(login_url=reverse_lazy("users:sign_in"))
+class CreateWish(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
     async def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         form = CreateWishForm()
         return render(request, "wishes/create_wish.html", {"form": form})
 
-    @login_required(login_url=reverse_lazy("users:sign_in"))
     async def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         user = request.user
         form = CreateWishForm(request.POST, request.FILES)
@@ -53,8 +54,9 @@ class CreateWish(View):
         return render(request, "wishes/create_wish.html", {"form": form})
 
 
-class FulfillWish(View):
-    @login_required(login_url=reverse_lazy("users:sign_in"))
+class FulfillWish(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
     async def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
         selected_wish = get_object_or_404(Wish, id=wish, wish_list__user=request.user)
         selected_wish.fulfilled = True
@@ -62,8 +64,9 @@ class FulfillWish(View):
         return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
 
 
-class OpenWish(View):
-    @login_required(login_url=reverse_lazy("users:sign_in"))
+class OpenWish(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
     async def get(self, request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpResponse:
         target_wish_list = get_object_or_404(WishList, pk=wish_list_id)
         have_access = (
