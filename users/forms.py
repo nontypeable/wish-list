@@ -1,10 +1,15 @@
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import User
+
+if TYPE_CHECKING:
+    BaseUserChangeForm = UserChangeForm[User]
+else:
+    BaseUserChangeForm = UserChangeForm
 
 
 class UserSignUpForm(UserCreationForm[User]):
@@ -22,3 +27,9 @@ class UserSignUpForm(UserCreationForm[User]):
 class UserSignInForm(forms.Form):
     email = forms.EmailField(label="Электронная почта")
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput, strip=False)
+
+
+class AdminUserChangeForm(BaseUserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = User
+        fields = "__all__"

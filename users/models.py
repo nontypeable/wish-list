@@ -61,21 +61,21 @@ class UserManager(BaseUserManager["User"]):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = fields.EmailField(verbose_name="Электронная почта", unique=True)
+    email = fields.EmailField(verbose_name="электронная почта", unique=True)
     username = fields.CharField(
-        verbose_name="Имя пользователя",
+        verbose_name="имя пользователя",
         max_length=255,
         unique=True,
         validators=[UnicodeUsernameValidator()],
     )
-    first_name = fields.CharField(verbose_name="Имя", max_length=255)
-    last_name = fields.CharField(verbose_name="Фамилия", max_length=255)
+    first_name = fields.CharField(verbose_name="имя", max_length=255)
+    last_name = fields.CharField(verbose_name="фамилия", max_length=255)
 
-    is_active = fields.BooleanField(default=True)
-    is_staff = fields.BooleanField(default=False)
+    is_active = fields.BooleanField(verbose_name="активен", default=True)
+    is_staff = fields.BooleanField(verbose_name="доступ в админку", default=False)
 
-    created_at = fields.DateTimeField(auto_now_add=True)
-    updated_at = fields.DateTimeField(auto_now=True)
+    created_at = fields.DateTimeField(verbose_name="дата регистрации", auto_now_add=True)
+    updated_at = fields.DateTimeField(verbose_name="дата последнего изменения", auto_now=True)
 
     objects: ClassVar[UserManager] = UserManager()
 
@@ -85,6 +85,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS: ClassVar[list[str]] = ["username", "first_name", "last_name"]
 
     class Meta:
+        verbose_name = "пользователь"
+        verbose_name_plural = "пользователи"
+
         constraints: ClassVar[list[models.BaseConstraint]] = [
             models.CheckConstraint(
                 name="%(app_label)s_%(class)s_first_name_not_empty", condition=~Q(first_name="")
