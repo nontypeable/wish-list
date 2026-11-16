@@ -1,0 +1,8 @@
+{% extends "wishes/invitations/base.html" %}
+{% block title %}Приглашение готово{% endblock %}
+{% block panel_content %}
+    <a class="sharing-back" href="{% url 'wishes:get_wish_list' %}">‹ К моему вишлисту</a>
+    <h1>Приглашение готово</h1>
+    {% include "wishes/partials/invitation_result.html" %}
+    <a class="sharing-button sharing-button--secondary sharing-button--full" href="/wishes/access/">Управлять доступом</a>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "wishes/invitations/base.html" %}
+{% block title %}Пригласить в вишлист{% endblock %}
+{% block panel_content %}
+    <a class="sharing-back" href="{% url 'wishes:get_wish_list' %}">‹ К моему вишлисту</a>
+    <h1>Поделитесь желаниями<br>с близким человеком</h1>
+    <p class="sharing-copy">Пригласите по email. Аккаунт у получателя может появиться позже.</p>
+    {% include "wishes/partials/invitation_form.html" %}
+    <p class="sharing-footnote">После создания вы получите ссылку. Отправьте её человеку удобным способом.</p>
+{% endblock %}

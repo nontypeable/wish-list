@@ -39,3 +39,33 @@ class Wish(models.Model):
     @property
     def is_booked(self) -> bool:
         return self.who_booked is not None
+
+
+class WishListInvitation(models.Model):
+    wish_list = models.ForeignKey(
+        WishList,
+        on_delete=models.CASCADE,
+        related_name="invitations",
+    )
+    invited_email = models.EmailField()
+    code_hash = models.CharField(max_length=64, unique=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.wish_list.name
+
+
+class AvailableWishList(models.Model):
+    wish_list = models.ForeignKey(
+        WishList,
+        on_delete=models.CASCADE,
+        related_name="accesses",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="wish_list_accesses",
+    )
+
+    def __str__(self) -> str:
+        return self.wish_list.name

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Вишлист: {{ wish_list.user.first_name|default:wish_list.user.username }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
+{% block content %}
+    <div class="wishes wishes--wide">
+        <a class="sharing-back" href="{% url 'wishes:shared_wishlists' %}">‹ Доступные мне</a>
+        <header class="wishes__header">
+            <div class="sharing-person-heading">
+                <div class="sharing-avatar" aria-hidden="true">{{ wish_list.user.first_name|first|default:'♡' }}</div>
+                <h1 class="wishes__title">Вишлист: {{ wish_list.user.first_name|default:wish_list.user.username }}</h1>
+            </div>
+            <nav class="wishes__filters wishes__filters--header" aria-label="Статус желаний">
+                <a href="/wishes/{{ wish_list.pk }}" class="wishes__filter{% if not show_fulfilled %} wishes__filter--active{% endif %}"{% if not show_fulfilled %} aria-current="page"{% endif %}>В планах <span class="wishes__count">{{ active_count }}</span></a>
+                <a href="/wishes/{{ wish_list.pk }}?status=fulfilled" class="wishes__filter wishes__filter--fulfilled{% if show_fulfilled %} wishes__filter--active{% endif %}"{% if show_fulfilled %} aria-current="page"{% endif %}>Исполнено <span class="wishes__count">{{ fulfilled_count }}</span></a>
+            </nav>
+        </header>
+        {% if wishes %}{% include "wishes/partials/wish_cards.html" with read_only=True %}{% else %}<div class="wishes__empty"><p>{% if show_fulfilled %}Пока нет исполненных желаний.{% else %}В этом списке пока нет желаний.{% endif %}</p></div>{% endif %}
+    </div>
+    {% include "wishes/partials/wish_dialog.html" %}
+    <script src="{% static 'js/wish-dialog.js' %}" defer></script>
+{% endblock %}

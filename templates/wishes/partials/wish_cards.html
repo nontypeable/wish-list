@@ -1,0 +1,23 @@
+<ul class="wishes__list">
+    {% for wish in wishes %}
+        <li class="wish">
+            <button class="wish__open" type="button" data-wish-open="wish-detail-{{ wish.pk }}" aria-haspopup="dialog" aria-controls="wish-details" aria-labelledby="wish-name-{{ wish.pk }}">
+                {% if wish.image %}
+                    <img class="wish__image" src="{{ wish.image.url }}" alt="" loading="lazy">
+                {% endif %}
+                <span class="wish__head">
+                    <span class="wish__name" id="wish-name-{{ wish.pk }}">{{ wish.name }}</span>
+                    {% if wish.price is not None %}
+                        <span class="wish__price">{{ wish.price|floatformat:"-2" }}&nbsp;₽</span>
+                    {% endif %}
+                </span>
+                {% if wish.description %}
+                    <span class="wish__text">{{ wish.description }}</span>
+                {% endif %}
+            </button>
+            <template id="wish-detail-{{ wish.pk }}">
+                {% include "wishes/partials/wish_detail.html" %}
+            </template>
+        </li>
+    {% endfor %}
+</ul>

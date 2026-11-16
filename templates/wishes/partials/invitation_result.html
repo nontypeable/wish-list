@@ -1,0 +1,10 @@
+<div class="sharing-invite-result" data-invitation-result>
+    <p class="sharing-copy">{% if recipient_email %}Для <strong>{{ recipient_email }}</strong>.<br>{% endif %}Скопируйте ссылку и отправьте её человеку.</p>
+    <div class="sharing-field">
+        <label for="invitation-link">Ссылка-приглашение</label>
+        <input id="invitation-link" class="sharing-link" readonly value="{{ invitation_url }}"{% if not invitation_url %} placeholder="Ссылка появится после создания приглашения"{% endif %}>
+    </div>
+    {% if expires_at %}<p class="sharing-field-help sharing-link-help">Можно принять до {{ expires_at|date:"j E Y, H:i" }}.</p>{% endif %}
+    <button class="sharing-button sharing-button--primary sharing-button--full" type="button" data-copy-target="invitation-link"{% if not invitation_url %} disabled{% endif %}>Скопировать ссылку</button>
+    <p class="sharing-feedback" data-copy-status role="status" aria-live="polite"></p>
+</div>

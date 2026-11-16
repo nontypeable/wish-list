@@ -1,0 +1,20 @@
+{% extends "wishes/invitations/base.html" %}
+{% block title %}Приглашение недоступно{% endblock %}
+{% block panel_class %} sharing-panel--centered{% endblock %}
+{% block panel_content %}
+    <div class="sharing-symbol" aria-hidden="true">{% include "wishes/partials/lock_icon.html" %}</div>
+    {% if reason == "expired" %}
+        <h1>Срок приглашения истёк</h1>
+        <p class="sharing-copy">Эту ссылку уже нельзя принять. Попросите владельца вишлиста создать новое приглашение.</p>
+    {% elif reason == "revoked" %}
+        <h1>Доступ к вишлисту закрыт</h1>
+        <p class="sharing-copy">Владелец закрыл доступ. Чтобы снова посмотреть желания, потребуется новое приглашение.</p>
+    {% elif reason == "cancelled" %}
+        <h1>Приглашение отменено</h1>
+        <p class="sharing-copy">Владелец отменил это приглашение. Попросите его прислать новую ссылку.</p>
+    {% else %}
+        <h1>Приглашение не найдено</h1>
+        <p class="sharing-copy">Проверьте, что ссылка скопирована целиком, или попросите владельца прислать её ещё раз.</p>
+    {% endif %}
+    {% if user.is_authenticated %}<a class="sharing-button sharing-button--primary sharing-button--full" href="{% url 'wishes:shared_wishlists' %}">Доступные мне вишлисты</a>{% else %}<a class="sharing-button sharing-button--primary sharing-button--full" href="{% url 'users:sign_in' %}">Войти в аккаунт</a>{% endif %}
+{% endblock %}

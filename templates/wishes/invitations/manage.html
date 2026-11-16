@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Доступ к вишлисту{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
+{% block content %}
+    <div class="sharing-manage">
+        <a class="sharing-back" href="{% url 'wishes:get_wish_list' %}">‹ К моему вишлисту</a>
+        <header class="wishes__header"><div><h1 class="wishes__title">Доступ к вишлисту</h1><p class="sharing-copy">Вы решаете, кто увидит ваши желания.</p></div><button type="button" class="sharing-button sharing-button--primary" data-invite-open aria-haspopup="dialog" aria-controls="invite-dialog">Пригласить</button></header>
+        <section class="sharing-access-section" aria-labelledby="access-title">
+            <h2 id="access-title">Есть доступ <span class="wishes__count">{{ accesses|length }}</span></h2>
+            <ul class="sharing-people">
+                {% for access in accesses %}
+                    <li class="sharing-person">
+                        <div class="sharing-avatar" aria-hidden="true">{{ access.user.first_name|first|default:'♡' }}</div>
+                        <div class="sharing-person__info"><strong>{{ access.user.first_name|default:access.user.username }}</strong><span>{{ access.user.email }}</span></div>
+                        <form method="post" action="/wishes/access/{{ access.pk }}/revoke/" data-confirm-title="Закрыть доступ?" data-confirm-message="{{ access.user.first_name|default:access.user.username }} больше не сможет смотреть ваш вишлист. Чтобы вернуть доступ, потребуется новое приглашение." data-confirm-action="Закрыть доступ">{% csrf_token %}<button type="submit" class="sharing-text-button sharing-text-button--danger">Закрыть доступ</button></form>
+                    </li>
+                {% empty %}
+                    <li class="sharing-people__empty">Сейчас вишлист видите только вы. Пригласите близких, чтобы поделиться желаниями.</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="sharing-access-section" aria-labelledby="pending-title">
+            <h2 id="pending-title">Ожидают принятия <span class="wishes__count">{{ pending_invitations|length }}</span></h2>
+            <ul class="sharing-people">
+                {% for invitation in pending_invitations %}
+                    <li class="sharing-person">
+                        <div class="sharing-person__info"><strong>{{ invitation.invited_email }}</strong><span>{% if invitation.expires_at %}Можно принять до {{ invitation.expires_at|date:"j E Y" }}{% else %}Приглашение ещё не принято{% endif %}</span></div>
+                        <div class="sharing-person__actions">
+                            <form method="post" action="/wishes/invitations/{{ invitation.pk }}/cancel/" data-confirm-title="Отменить приглашение?" data-confirm-message="Ссылка для {{ invitation.invited_email }} перестанет работать. Вы сможете пригласить этого человека снова." data-confirm-action="Отменить приглашение">{% csrf_token %}<button class="sharing-text-button sharing-text-button--danger" type="submit">Отменить</button></form>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="sharing-people__empty">Нет приглашений, ожидающих принятия.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+    {% include "wishes/partials/invitation_dialog.html" %}
+    <dialog class="sharing-confirm" id="sharing-confirm" aria-labelledby="sharing-confirm-title" aria-describedby="sharing-confirm-message">
+        <h2 id="sharing-confirm-title">Подтвердите действие</h2><p class="sharing-copy" id="sharing-confirm-message"></p>
+        <div class="sharing-confirm__actions"><button class="sharing-button sharing-button--secondary" type="button" data-confirm-close autofocus>Оставить</button><button class="sharing-button sharing-button--danger" type="button" data-confirm-submit>Подтвердить</button></div>
+    </dialog>
+    <script src="{% static 'js/invitations.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Доступные мне вишлисты{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
+{% block content %}
+    <div class="wishes wishes--wide">
+        {% include "wishes/partials/list_navigation.html" with current_section="shared" %}
+        <header class="wishes__header"><div><h1 class="wishes__title">Доступные мне</h1><p class="sharing-copy">Люди, которые поделились с вами своими желаниями</p></div></header>
+        <ul class="sharing-lists">
+            {% for shared_list in shared_wish_lists %}
+                <li><a class="sharing-list-card" href="/wishes/{{ shared_list.pk }}"><span class="sharing-avatar" aria-hidden="true">{{ shared_list.user.first_name|first|default:'♡' }}</span><span><strong>Вишлист: {{ shared_list.user.first_name|default:shared_list.user.username }}</strong><span class="sharing-list-card__meta">Только просмотр</span></span><span class="sharing-list-card__arrow" aria-hidden="true">↗</span></a></li>
+            {% empty %}
+                <li class="sharing-empty"><div class="sharing-symbol" aria-hidden="true">{% include "wishes/partials/lock_icon.html" %}</div><h2>Пока никто не поделился вишлистом</h2><p>Когда вы примете приглашение, список появится здесь.</p></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

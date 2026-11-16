@@ -1,0 +1,10 @@
+<form method="post" action="{% url 'wishes:create_invitation' %}" class="sharing-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="sharing-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="sharing-field{% if form.email.errors %} sharing-field--invalid{% endif %}">
+        <label for="invitation-email">Email получателя</label>
+        <input id="invitation-email" type="email" name="email" value="{{ form.email.value|default_if_none:'' }}" placeholder="name@example.com" autocomplete="email" maxlength="254" required autofocus{% if form.email.errors %} aria-describedby="invitation-email-errors" aria-invalid="true"{% endif %}>
+        {% if form.email.errors %}<div id="invitation-email-errors" class="sharing-errors" role="alert">{{ form.email.errors }}</div>{% endif %}
+    </div>
+    <button class="sharing-button sharing-button--primary sharing-button--full" type="submit">Создать приглашение</button>
+</form>

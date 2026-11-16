@@ -1,0 +1,27 @@
+{% extends "wishes/invitations/base.html" %}
+{% block title %}Приглашение в вишлист{% endblock %}
+{% block panel_class %} sharing-panel--centered{% endblock %}
+{% block panel_content %}
+    <div class="sharing-avatar sharing-avatar--large" aria-hidden="true">{{ inviter_name|first|default:'♡' }}</div>
+    {% if inviter_name %}<p class="sharing-context">Вас приглашает {{ inviter_name }}</p>{% endif %}
+    <h1>{% if inviter_name %}Вишлист: {{ inviter_name }}{% else %}Вас приглашают в вишлист{% endif %}</h1>
+    <p class="sharing-copy">Посмотрите, что порадует близкого человека.<br>Здесь собраны его маленькие и большие желания.</p>
+    {% if has_access %}
+        <div class="sharing-permissions"><span aria-hidden="true">✓</span><div><strong>У вас уже есть доступ</strong><p>Этот вишлист есть в разделе «Доступные мне».</p></div></div>
+        {% if wish_list_url %}<a class="sharing-button sharing-button--primary sharing-button--full" href="{{ wish_list_url }}">Открыть вишлист</a>{% else %}<a class="sharing-button sharing-button--primary sharing-button--full" href="{% url 'wishes:shared_wishlists' %}">Доступные мне вишлисты</a>{% endif %}
+    {% elif user.is_authenticated %}
+        {% if email_mismatch %}
+            <p class="sharing-notice">Вы вошли как <strong>{{ user.email }}</strong>. Приглашение предназначено другому адресу.</p>
+            <form method="post" action="/users/sign-out/">{% csrf_token %}<input type="hidden" name="next" value="{{ invitation_path }}"><button class="sharing-button sharing-button--primary sharing-button--full" type="submit">Войти с другим аккаунтом</button></form>
+        {% elif not email_verified and not can_accept %}
+            <p class="sharing-notice">Подтвердите адрес {{ recipient_email }}, чтобы принять приглашение.</p>
+            <a class="sharing-button sharing-button--primary sharing-button--full" href="/users/email/verify/?next={{ invitation_path|urlencode }}">Подтвердить email</a>
+        {% else %}
+            <form method="post" action="{{ invitation_path }}" class="sharing-accept-form">{% csrf_token %}<button class="sharing-button sharing-button--primary sharing-button--full" type="submit">Принять приглашение</button></form>
+        {% endif %}
+    {% else %}
+        <a class="sharing-button sharing-button--primary sharing-button--full" href="{% url 'users:sign_up' %}?next={{ invitation_path|urlencode }}">Создать аккаунт и продолжить</a>
+        <p class="sharing-switch">Уже есть аккаунт? <a href="{% url 'users:sign_in' %}?next={{ invitation_path|urlencode }}">Войти</a></p>
+        <p class="sharing-footnote">Список откроется после принятия приглашения.{% if expires_at %} Ссылка действует до {{ expires_at|date:"j E Y" }}.{% endif %}</p>
+    {% endif %}
+{% endblock %}

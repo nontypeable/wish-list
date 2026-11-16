@@ -1,0 +1,4 @@
+<nav class="sharing-navigation" aria-label="Вишлисты">
+    <a href="{% url 'wishes:get_wish_list' %}"{% if current_section == "own" %} aria-current="page"{% endif %}>Мой вишлист</a>
+    <a href="{% url 'wishes:shared_wishlists' %}"{% if current_section == "shared" %} aria-current="page"{% endif %}>Доступные мне</a>
+</nav>
