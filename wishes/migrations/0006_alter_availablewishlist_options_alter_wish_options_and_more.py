@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             name="wishlistinvitation",
             options={
                 "verbose_name": "приглашение в вишлист",
-                "verbose_name_plural": "приглашения в вишлист",
+                "verbose_name_plural": "приглашения в вишлисты",
             },
         ),
         migrations.AlterField(

@@ -72,7 +72,7 @@ class WishListInvitation(models.Model):
 
     class Meta:
         verbose_name: ClassVar[str] = "приглашение в вишлист"
-        verbose_name_plural: ClassVar[str] = "приглашения в вишлист"
+        verbose_name_plural: ClassVar[str] = "приглашения в вишлисты"
 
     def __str__(self) -> str:
         return self.wish_list.name
