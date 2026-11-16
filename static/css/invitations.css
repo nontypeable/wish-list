@@ -36,6 +36,7 @@
     border-radius: 12px;
 }
 .sharing-panel--centered { text-align: center; }
+.sharing-not-ready__moon { margin-bottom: 1.25rem; font-size: 3.5rem; line-height: 1.2; }
 .sharing-panel h1, .sharing-confirm h2 { margin: 0; font-size: 1.5rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
 .sharing-back { display: inline-block; margin-bottom: 1.5rem; font-size: 0.8125rem; text-decoration: none; }
 .sharing-copy { margin: 1rem 0 1.5rem; font-size: 0.875rem; line-height: 1.65; color: var(--text-muted); overflow-wrap: anywhere; }

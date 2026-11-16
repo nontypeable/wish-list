@@ -1,0 +1,11 @@
+{% extends "wishes/invitations/base.html" %}
+
+{% block title %}Пока не сделали — wish{% endblock %}
+{% block panel_class %} sharing-panel--centered{% endblock %}
+
+{% block panel_content %}
+    <div class="sharing-not-ready__moon" aria-hidden="true">🌚</div>
+    <h1>Пока не сделали</h1>
+    <p class="sharing-copy">Эта функция ещё в работе.<br>Доступ и приглашения остались без изменений.</p>
+    <a class="sharing-button sharing-button--primary sharing-button--full" href="{% url 'wishes:manage_access' %}">Вернуться к управлению доступом</a>
+{% endblock %}

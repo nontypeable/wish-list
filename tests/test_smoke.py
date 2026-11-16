@@ -11,3 +11,9 @@ def test_admin_login_page_opens(client: Client) -> None:
     response = client.get(reverse_lazy("admin:login"))
 
     assert response.status_code == HTTPStatus.OK
+
+
+def test_home_page_opens(client: Client) -> None:
+    response = client.get("/")
+
+    assert response.status_code == HTTPStatus.OK
