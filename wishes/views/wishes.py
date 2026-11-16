@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class GetWishList(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    async def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         wishes = Wish.objects.filter(wish_list__user=request.user)
         show_fulfilled = request.GET.get("status") == "fulfilled"
         return render(
@@ -39,11 +39,11 @@ class GetWishList(LoginRequiredMixin, View):
 class CreateWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    async def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         form = CreateWishForm()
         return render(request, "wishes/create_wish.html", {"form": form})
 
-    async def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+    def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         user = request.user
         form = CreateWishForm(request.POST, request.FILES)
         if form.is_valid():
@@ -57,7 +57,7 @@ class CreateWish(LoginRequiredMixin, View):
 class FulfillWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    async def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
+    def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
         selected_wish = get_object_or_404(Wish, id=wish, wish_list__user=request.user)
         selected_wish.fulfilled = True
         selected_wish.save(update_fields=["fulfilled"])
@@ -67,7 +67,7 @@ class FulfillWish(LoginRequiredMixin, View):
 class OpenWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    async def get(self, request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpResponse:
+    def get(self, request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpResponse:
         target_wish_list = get_object_or_404(WishList, pk=wish_list_id)
         have_access = (
             AvailableWishList.objects.filter(

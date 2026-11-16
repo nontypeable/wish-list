@@ -33,14 +33,14 @@ class UserProfile(LoginRequiredMixin, View):
 
 
 class UserSignUp(View):
-    async def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))
 
         form = UserSignUpForm()
         return render(request, "users/sign_up.html", {"form": form})
 
-    async def post(self, request: HttpRequest) -> HttpResponse:
+    def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))
 
@@ -55,14 +55,14 @@ class UserSignUp(View):
 
 
 class UserSignIn(View):
-    async def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))
 
         form = UserSignInForm()
         return render(request, "users/sign_in.html", {"form": form})
 
-    async def post(self, request: HttpRequest) -> HttpResponse:
+    def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))
 
