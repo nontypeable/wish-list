@@ -6,12 +6,22 @@ from django.db import transaction
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from users.forms import UserSignInForm, UserSignUpForm
 from wishes.models import WishList
 
 if TYPE_CHECKING:
     from django.http.request import HttpRequest
+
+
+def _redirect_after_auth(request: HttpRequest) -> HttpResponse:
+    target = request.GET.get("next") or request.POST.get("next")
+    if target and url_has_allowed_host_and_scheme(
+        target, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        return redirect(target)
+    return redirect("users:profile")
 
 
 @login_required(login_url=reverse_lazy("users:sign_in"))
@@ -30,9 +40,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
                 user = form.save()
                 WishList.objects.create(user=user, name="Мои желания")
             login(request, user)
-            if next := request.GET.get("next"):
-                return redirect(next)
-            return HttpResponseRedirect(reverse_lazy("users:profile"))
+            return _redirect_after_auth(request)
     else:
         form = UserSignUpForm()
     return render(request, "users/sign_up.html", {"form": form})
@@ -50,9 +58,7 @@ def sign_in(request: HttpRequest) -> HttpResponse:
             )
             if user:
                 login(request, user)
-                if next := request.GET.get("next"):
-                    return redirect(next)
-                return HttpResponseRedirect(reverse_lazy("users:profile"))
+                return _redirect_after_auth(request)
             form.add_error(None, "Неверная электронная почта или пароль.")
     else:
         form = UserSignInForm()

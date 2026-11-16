@@ -34,6 +34,7 @@ htmlcov/
 .env
 .env.*
 !.env.example
+!.env.production.example
 *.local
 
 # Прочее
@@ -42,6 +43,8 @@ tmp/
 .tmp/
 *.sqlite3
 media/
+staticfiles/
+backups/
 
 # IDE
 .idea/

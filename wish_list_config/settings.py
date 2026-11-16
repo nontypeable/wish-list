@@ -31,6 +31,19 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+# Only enable this behind our Caddy proxy; the web service has no public port.
+SECURE_PROXY_SSL_HEADER = (
+    ("HTTP_X_FORWARDED_PROTO", "https") if env.bool("TRUST_PROXY_HEADERS", False) else None
+)
+SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", False)
+SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", False)
+CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", False)
+SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", 0)
+# Don't apply HSTS to unrelated subdomains or request browser preload.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
 
 AUTH_USER_MODEL = "users.User"
 
@@ -83,7 +96,8 @@ WSGI_APPLICATION = "wish_list_config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": Path(env("DATABASE_PATH", default=str(BASE_DIR / "db.sqlite3"))),
+        "OPTIONS": {"timeout": 20},
     }
 }
 
@@ -125,11 +139,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = Path(env("STATIC_ROOT", default=str(BASE_DIR / "staticfiles")))
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 
 
 # Email
@@ -137,6 +154,17 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 MAILERS = {
     "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        "BACKEND": env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"),
     },
 }
+if MAILERS["default"]["BACKEND"] == "django.core.mail.backends.smtp.EmailBackend":
+    MAILERS["default"]["OPTIONS"] = {
+        "host": env("SMTP_HOST", default="localhost"),
+        "port": env.int("SMTP_PORT", 25),
+        "username": env("SMTP_USERNAME", default=""),
+        "password": env("SMTP_PASSWORD", default=""),
+        "use_tls": env.bool("SMTP_USE_TLS", False),
+        "use_ssl": env.bool("SMTP_USE_SSL", False),
+        "timeout": 10,
+    }
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="webmaster@localhost")
