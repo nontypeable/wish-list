@@ -1,0 +1,12 @@
+<dialog class="sharing-invite-dialog" id="invite-dialog" aria-labelledby="invite-dialog-title"{% if invitation_form.errors %} data-invite-errors{% endif %}>
+    <button class="sharing-invite-dialog__close" type="button" data-invite-close aria-label="Закрыть">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <h2 id="invite-dialog-title">Пригласить в вишлист</h2>
+    <div data-invite-content>
+        {% include "wishes/partials/invitation_form.html" with form=invitation_form %}
+        <p class="sharing-footnote">После создания вы получите ссылку. Отправьте её человеку удобным способом.</p>
+    </div>
+    <p class="sharing-errors" data-invite-error role="alert" hidden></p>
+    <button class="sharing-text-button sharing-invite-dialog__reset" type="button" data-invite-reset hidden>Пригласить ещё</button>
+</dialog>

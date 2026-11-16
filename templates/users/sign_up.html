@@ -5,20 +5,25 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/invitations.css' %}">
 {% endblock %}
 
 {% block content %}
+    {% firstof request.GET.next next as return_to %}
     <div class="auth">
         <h1 class="auth__title">Регистрация</h1>
 
+        {% if recipient_email %}<p class="sharing-auth-context">{% if inviter_name %}<strong>{{ inviter_name }}</strong> приглашает вас в свой вишлист.{% else %}Вас пригласили в вишлист.{% endif %} Зарегистрируйтесь с адресом <strong>{{ recipient_email }}</strong>. После подтверждения почты вы вернётесь к приглашению.</p>{% endif %}
+
         <form method="post" class="auth__form" novalidate>
             {% csrf_token %}
+            {% if return_to %}<input type="hidden" name="next" value="{{ return_to }}">{% endif %}
 
             {% include "users/partials/form_fields.html" %}
 
             <button type="submit" class="auth__submit">Создать аккаунт</button>
         </form>
 
-        <p class="auth__alt">Уже есть аккаунт? <a href="{% url 'users:sign_in' %}">Войти</a></p>
+        <p class="auth__alt">Уже есть аккаунт? <a href="{% url 'users:sign_in' %}{% if return_to %}?next={{ return_to|urlencode }}{% endif %}">Войти</a></p>
     </div>
 {% endblock %}

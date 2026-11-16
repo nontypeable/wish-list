@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 
 from wishes.forms import CreateWishForm
-from wishes.models import Wish, WishList
+from wishes.models import AvailableWishList, Wish, WishList
 
 if TYPE_CHECKING:
     from django.http.request import HttpRequest
@@ -56,3 +56,30 @@ def fulfill_wish(request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
     selected_wish.fulfilled = True
     selected_wish.save(update_fields=["fulfilled"])
     return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
+
+
+@login_required(login_url=reverse_lazy("users:sign_in"))
+def open_wish(request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpResponse:
+    target_wish_list = get_object_or_404(WishList, pk=wish_list_id)
+    have_access = (
+        AvailableWishList.objects.filter(
+            wish_list=target_wish_list, user_id=request.user.id
+        ).exists()
+        or target_wish_list.user == request.user
+    )
+    if not have_access:
+        return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
+    wishes = Wish.objects.filter(wish_list=target_wish_list)
+    active_count = wishes.filter(fulfilled=False).count()
+    fulfilled_count = wishes.filter(fulfilled=True).count()
+    return render(
+        request,
+        "wishes/shared_wish_list.html",
+        {
+            "wish_list": target_wish_list,
+            "wishes": wishes,
+            "show_fulfilled": False,
+            "active_count": active_count,
+            "fulfilled_count": fulfilled_count,
+        },
+    )

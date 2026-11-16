@@ -1,0 +1,11 @@
+{% extends "wishes/invitations/base.html" %}
+{% block title %}Подтвердите email{% endblock %}
+{% block panel_class %} sharing-panel--centered{% endblock %}
+{% block panel_content %}
+    <div class="sharing-symbol sharing-symbol--accent" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg></div>
+    <h1>Проверьте почту</h1>
+    <p class="sharing-copy">{% if email %}Мы отправили письмо на<br><strong>{{ email }}</strong>.{% else %}Мы отправили письмо на адрес вашего аккаунта.{% endif %}</p>
+    <p class="sharing-copy">Откройте письмо и нажмите «Подтвердить email». После подтверждения вы сможете вернуться к приглашению.</p>
+    <form method="post" action="/users/email/resend/">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}"><button class="sharing-button sharing-button--secondary sharing-button--full" type="submit">Отправить письмо ещё раз</button></form>
+    <p class="sharing-footnote">Если письмо не пришло, проверьте папку «Спам» и правильность адреса в аккаунте.</p>
+{% endblock %}

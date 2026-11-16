@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/wishes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/invitations.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="sharing-page">
+        <div class="sharing-panel{% block panel_class %}{% endblock %}">
+            {% block panel_content %}{% endblock %}
+        </div>
+    </div>
+    <script src="{% static 'js/invitations.js' %}" defer></script>
+{% endblock %}
