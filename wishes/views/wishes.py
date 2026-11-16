@@ -69,7 +69,8 @@ def open_wish(request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpRespo
     )
     if not have_access:
         return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
-    wishes = Wish.objects.filter(wish_list=target_wish_list)
+    status = request.GET.get("status") == "fulfilled"
+    wishes = Wish.objects.filter(wish_list=target_wish_list, fulfilled=status)
     active_count = wishes.filter(fulfilled=False).count()
     fulfilled_count = wishes.filter(fulfilled=True).count()
     return render(
@@ -78,7 +79,7 @@ def open_wish(request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpRespo
         {
             "wish_list": target_wish_list,
             "wishes": wishes,
-            "show_fulfilled": False,
+            "show_fulfilled": status,
             "active_count": active_count,
             "fulfilled_count": fulfilled_count,
         },
