@@ -20,11 +20,11 @@ from django.urls import URLPattern, URLResolver, include, path
 from django.views.generic import TemplateView
 
 from wish_list_config.views import healthcheck
-from wishes.views.media import wish_image
+from wishes.views.media import WishImage
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("healthz/", healthcheck, name="healthcheck"),
-    path("media/<path:image_path>", wish_image, name="wish_image"),
+    path("media/<path:image_path>", WishImage.as_view(), name="wish_image"),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("users/", include("users.urls"), name="users"),
     path("wishes/", include("wishes.urls"), name="wishes"),

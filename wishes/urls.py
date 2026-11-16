@@ -10,10 +10,10 @@ urlpatterns = [
     path("<int:wish_list_id>/", wishes.OpenWish.as_view(), name="open_other_wish_list"),
     path("create/", wishes.CreateWish.as_view(), name="create_wish"),
     path("fulfill/<int:wish>", wishes.FulfillWish.as_view(), name="fulfill_wish"),
-    path("invantions/new", invitations.create_invitation, name="create_invitation"),
-    path("invantions/<str:code>", invitations.accept_invitation, name="accept_invitation"),
-    path("wishlists/shared", invitations.get_accepted_wish_lists, name="shared_wishlists"),
-    path("access/", invitations.manage_access, name="manage_access"),
+    path("invantions/new", invitations.CreateInvitation.as_view(), name="create_invitation"),
+    path("invantions/<str:code>", invitations.AcceptInvitation.as_view(), name="accept_invitation"),
+    path("wishlists/shared", invitations.GetAcceptedWishLists.as_view(), name="shared_wishlists"),
+    path("access/", invitations.ManageAccess.as_view(), name="manage_access"),
     path(
         "access/not-ready/",
         login_required(
