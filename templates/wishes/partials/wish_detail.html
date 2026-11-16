@@ -18,7 +18,7 @@
         </div>
     {% endif %}
 </div>
-{% if wish.fulfilled or not read_only %}
+{% if wish.fulfilled or not read_only or wish_list.user_id != request.user.pk %}
 <footer class="wish-dialog__footer">
     {% if wish.fulfilled %}
         <p class="wish-dialog__fulfilled">
@@ -33,6 +33,27 @@
                 Отметить исполненным
             </button>
         </form>
+    {% elif read_only and wish_list.user_id != request.user.pk %}
+        {% if wish.who_booked_id %}
+        <p class="wish-dialog__reserved">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/></svg>
+            {% if wish.who_booked_id == request.user.pk %}Вы забронировали этот подарок{% else %}Подарок забронирован{% endif %}
+        </p>
+        {% if wish.who_booked_id == request.user.pk %}
+            <form method="post" action="{% url 'wishes:unbook_wish' wish.pk %}">
+                {% csrf_token %}
+                <button class="wish-dialog__cancel-reservation" type="submit">Отменить бронь</button>
+            </form>
+        {% endif %}
+        {% else %}
+        <form method="post" action="{% url 'wishes:book_wish' wish.pk %}">
+            {% csrf_token %}
+            <button class="wish-dialog__reserve" type="submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg>
+                Забронировать
+            </button>
+        </form>
+        {% endif %}
     {% endif %}
 </footer>
 {% endif %}

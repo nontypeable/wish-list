@@ -1,10 +1,22 @@
 <ul class="wishes__list">
     {% for wish in wishes %}
-        <li class="wish">
-            <button class="wish__open" type="button" data-wish-open="wish-detail-{{ wish.pk }}" aria-haspopup="dialog" aria-controls="wish-details" aria-labelledby="wish-name-{{ wish.pk }}">
-                {% if wish.image %}
+        <li class="wish{% if read_only and wish_list.user_id != request.user.pk and wish.who_booked_id and not wish.fulfilled %} wish--reserved{% endif %}">
+            <button class="wish__open" type="button" data-wish-open="wish-detail-{{ wish.pk }}" aria-haspopup="dialog" aria-controls="wish-details" aria-labelledby="{% if read_only and wish_list.user_id != request.user.pk and wish.who_booked_id and not wish.fulfilled %}wish-reserved-{{ wish.pk }}{% else %}wish-name-{{ wish.pk }}{% endif %}">
+                {% if read_only and wish_list.user_id != request.user.pk and wish.who_booked_id and not wish.fulfilled %}
+                    <span class="wish__gift">
+                        <svg class="wish__gift-box" width="112" height="112" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+                            <path d="M20 47h56v32a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6V47Z" fill="currentColor"/>
+                            <path d="M43 47h10v38H43z" fill="white"/>
+                            <path d="M48 34c-10 0-23-3-23-12a8 8 0 0 1 15-3l8 15Zm0 0c10 0 23-3 23-12a8 8 0 0 0-15-3l-8 15Z" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/>
+                            <rect x="14" y="33" width="68" height="15" rx="4" fill="currentColor"/>
+                            <path d="M43 33h10v15H43z" fill="white"/>
+                        </svg>
+                        <span class="wish__reserved-label" id="wish-reserved-{{ wish.pk }}">{% if wish.who_booked_id == request.user.pk %}Вы забронировали{% else %}Подарок забронирован{% endif %}</span>
+                    </span>
+                {% elif wish.image %}
                     <img class="wish__image" src="{{ wish.image.url }}" alt="" loading="lazy">
                 {% endif %}
+                {% if not read_only or wish_list.user_id == request.user.pk or not wish.who_booked_id or wish.fulfilled %}
                 <span class="wish__head">
                     <span class="wish__name" id="wish-name-{{ wish.pk }}">{{ wish.name }}</span>
                     {% if wish.price is not None %}
@@ -13,6 +25,7 @@
                 </span>
                 {% if wish.description %}
                     <span class="wish__text">{{ wish.description }}</span>
+                {% endif %}
                 {% endif %}
             </button>
             <template id="wish-detail-{{ wish.pk }}">

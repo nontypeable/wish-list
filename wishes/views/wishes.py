@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 
@@ -62,6 +62,26 @@ class FulfillWish(LoginRequiredMixin, View):
         selected_wish.fulfilled = True
         selected_wish.save(update_fields=["fulfilled"])
         return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
+
+
+class BookWish(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
+    def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
+        wish = Wish.objects.get(id=wish)
+        wish.who_booked = request.user
+        wish.save(update_fields=["who_booked"])
+        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
+
+
+class UnBookWish(LoginRequiredMixin, View):
+    login_url = reverse_lazy("users:sign_in")
+
+    def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
+        wish = Wish.objects.get(id=wish)
+        wish.who_booked = None
+        wish.save(update_fields=["who_booked"])
+        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
 class OpenWish(LoginRequiredMixin, View):
