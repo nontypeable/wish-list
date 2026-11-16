@@ -49,6 +49,7 @@ class WishListInvitation(models.Model):
     )
     invited_email = models.EmailField()
     code_hash = models.CharField(max_length=64, unique=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.wish_list.name

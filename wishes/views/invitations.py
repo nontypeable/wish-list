@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
 
 from users.models import User
@@ -66,7 +67,9 @@ def accept_invitation(request: AuthenticatedHttpRequest, code: str) -> HttpRespo
             User.objects.select_for_update().get(pk=user.pk)
             if not access.exists():
                 AvailableWishList.objects.create(wish_list=invite.wish_list, user=user)
-        return redirect("wishes:shared_wishlists")
+                invite.accepted_at = timezone.now()
+                invite.save(update_fields=["accepted_at"])
+                return redirect("wishes:shared_wishlists")
 
     owner = invite.wish_list.user
     return render(
@@ -98,7 +101,9 @@ def get_accepted_wish_lists(request: AuthenticatedHttpRequest) -> HttpResponse:
 def manage_access(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "GET":
         accesses = AvailableWishList.objects.filter(wish_list=request.user.wishlist)
-        pending_accesses = WishListInvitation.objects.filter(wish_list=request.user.wishlist)
+        pending_accesses = WishListInvitation.objects.filter(
+            wish_list=request.user.wishlist, accepted_at__isnull=True
+        )
         return render(
             request,
             "wishes/invitations/manage.html",

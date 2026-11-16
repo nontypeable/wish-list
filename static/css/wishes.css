@@ -87,6 +87,10 @@
     margin-bottom: 1.5rem;
 }
 
+.wishes__filters--header {
+    margin-bottom: 0;
+}
+
 .wishes__filter {
     display: inline-flex;
     align-items: center;

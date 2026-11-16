@@ -12,7 +12,7 @@
                 {% for access in accesses %}
                     <li class="sharing-person">
                         <div class="sharing-avatar" aria-hidden="true">{{ access.user.first_name|first|default:'♡' }}</div>
-                        <div class="sharing-person__info"><strong>{{ access.user.first_name|default:access.user.username }}</strong><span>{{ access.user.email }}</span><span>Только просмотр</span></div>
+                        <div class="sharing-person__info"><strong>{{ access.user.first_name|default:access.user.username }}</strong><span>{{ access.user.email }}</span></div>
                         <form method="post" action="/wishes/access/{{ access.pk }}/revoke/" data-confirm-title="Закрыть доступ?" data-confirm-message="{{ access.user.first_name|default:access.user.username }} больше не сможет смотреть ваш вишлист. Чтобы вернуть доступ, потребуется новое приглашение." data-confirm-action="Закрыть доступ">{% csrf_token %}<button type="submit" class="sharing-text-button sharing-text-button--danger">Закрыть доступ</button></form>
                     </li>
                 {% empty %}
@@ -25,10 +25,9 @@
             <ul class="sharing-people">
                 {% for invitation in pending_invitations %}
                     <li class="sharing-person">
-                        <div class="sharing-person__info"><strong>{{ invitation.email }}</strong><span>{% if invitation.expires_at %}Можно принять до {{ invitation.expires_at|date:"j E Y" }}{% else %}Приглашение ещё не принято{% endif %}</span></div>
+                        <div class="sharing-person__info"><strong>{{ invitation.invited_email }}</strong><span>{% if invitation.expires_at %}Можно принять до {{ invitation.expires_at|date:"j E Y" }}{% else %}Приглашение ещё не принято{% endif %}</span></div>
                         <div class="sharing-person__actions">
-                            <a href="/wishes/invitations/{{ invitation.pk }}/">Ссылка</a>
-                            <form method="post" action="/wishes/invitations/{{ invitation.pk }}/cancel/" data-confirm-title="Отменить приглашение?" data-confirm-message="Ссылка для {{ invitation.email }} перестанет работать. Вы сможете пригласить этого человека снова." data-confirm-action="Отменить приглашение">{% csrf_token %}<button class="sharing-text-button sharing-text-button--danger" type="submit">Отменить</button></form>
+                            <form method="post" action="/wishes/invitations/{{ invitation.pk }}/cancel/" data-confirm-title="Отменить приглашение?" data-confirm-message="Ссылка для {{ invitation.invited_email }} перестанет работать. Вы сможете пригласить этого человека снова." data-confirm-action="Отменить приглашение">{% csrf_token %}<button class="sharing-text-button sharing-text-button--danger" type="submit">Отменить</button></form>
                         </div>
                     </li>
                 {% empty %}
