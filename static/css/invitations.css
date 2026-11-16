@@ -50,7 +50,8 @@
     min-width: 0;
     padding: 0.625rem 0.75rem;
     font: inherit;
-    font-size: 0.875rem;
+    /* iOS zooms focused form fields when their text is smaller than 16px. */
+    font-size: max(1rem, 16px);
     color: var(--text);
     background: var(--surface);
     border: 1px solid var(--border);
@@ -58,7 +59,7 @@
 }
 .sharing-field input:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgb(59 91 219 / 0.15); }
 .sharing-field--invalid input { border-color: var(--error); }
-.sharing-field .sharing-link { font-size: 0.75rem; background: var(--bg); }
+.sharing-field .sharing-link { font-size: max(1rem, 16px); background: var(--bg); }
 .sharing-field-help { margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--text-muted); overflow-wrap: anywhere; }
 .sharing-link-help { margin-bottom: 1.25rem; }
 .sharing-button {
