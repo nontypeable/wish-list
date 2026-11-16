@@ -68,20 +68,20 @@ class BookWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
-        wish = Wish.objects.get(id=wish)
-        wish.who_booked = request.user
-        wish.save(update_fields=["who_booked"])
-        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
+        selected_wish = Wish.objects.get(id=wish)
+        selected_wish.who_booked = request.user
+        selected_wish.save(update_fields=["who_booked"])
+        return redirect("wishes:open_other_wish_list", wish_list_id=selected_wish.wish_list_id)
 
 
 class UnBookWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
-        wish = Wish.objects.get(id=wish)
-        wish.who_booked = None
-        wish.save(update_fields=["who_booked"])
-        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
+        selected_wish = Wish.objects.get(id=wish)
+        selected_wish.who_booked = None
+        selected_wish.save(update_fields=["who_booked"])
+        return redirect("wishes:open_other_wish_list", wish_list_id=selected_wish.wish_list_id)
 
 
 class OpenWish(LoginRequiredMixin, View):
