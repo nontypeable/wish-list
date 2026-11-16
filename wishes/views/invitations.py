@@ -92,3 +92,16 @@ def get_accepted_wish_lists(request: AuthenticatedHttpRequest) -> HttpResponse:
         "wishes/available_wish_lists.html",
         {"shared_wish_lists": wish_lists},
     )
+
+
+@login_required(login_url=reverse_lazy("users:sign_in"))
+def manage_access(request: AuthenticatedHttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        accesses = AvailableWishList.objects.filter(wish_list=request.user.wishlist)
+        pending_accesses = WishListInvitation.objects.filter(wish_list=request.user.wishlist)
+        return render(
+            request,
+            "wishes/invitations/manage.html",
+            {"accesses": accesses, "pending_invitations": pending_accesses},
+        )
+    return render(request, "wishes/invitations/manage.html")

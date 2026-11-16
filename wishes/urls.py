@@ -11,4 +11,5 @@ urlpatterns = [
     path("invantions/new", invitations.create_invitation, name="create_invitation"),
     path("invantions/<str:code>", invitations.accept_invitation, name="accept_invitation"),
     path("wishlists/shared", invitations.get_accepted_wish_lists, name="shared_wishlists"),
+    path("access/", invitations.manage_access, name="manage_access"),
 ]
