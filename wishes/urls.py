@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
+from django.views.generic import TemplateView
 
 from wishes.views import invitations, wishes
 
@@ -12,4 +14,12 @@ urlpatterns = [
     path("invantions/<str:code>", invitations.accept_invitation, name="accept_invitation"),
     path("wishlists/shared", invitations.get_accepted_wish_lists, name="shared_wishlists"),
     path("access/", invitations.manage_access, name="manage_access"),
+    path(
+        "access/not-ready/",
+        login_required(
+            TemplateView.as_view(template_name="wishes/invitations/not_ready.html"),
+            login_url="users:sign_in",
+        ),
+        name="access_not_ready",
+    ),
 ]
