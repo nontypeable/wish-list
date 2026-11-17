@@ -6,6 +6,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic.edit import CreateView
 
 from wishes.forms import CreateWishForm
 from wishes.models import AvailableWishList, Wish, WishList
@@ -37,22 +38,16 @@ class GetWishList(LoginRequiredMixin, View):
         )
 
 
-class CreateWish(LoginRequiredMixin, View):
+class CreateWish(LoginRequiredMixin, CreateView):
+    model = Wish
+    form_class = CreateWishForm
     login_url = reverse_lazy("users:sign_in")
+    template_name = "wishes/create_wish.html"
+    success_url = reverse_lazy("wishes:get_wish_list")
 
-    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        form = CreateWishForm()
-        return render(request, "wishes/create_wish.html", {"form": form})
-
-    def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        user = request.user
-        form = CreateWishForm(request.POST, request.FILES)
-        if form.is_valid():
-            wish = form.save(commit=False)
-            wish.wish_list = WishList.objects.get(user=user)
-            wish.save()
-            return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
-        return render(request, "wishes/create_wish.html", {"form": form})
+    def form_valid(self, form: CreateWishForm) -> HttpResponse:
+        form.instance.wish_list = WishList.objects.get(user=form.instance.user)
+        return super().form_valid(form)
 
 
 class FulfillWish(LoginRequiredMixin, View):
