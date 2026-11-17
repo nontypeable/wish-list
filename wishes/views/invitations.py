@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.views import View
 
 from users.models import User
+from wishes.forms import CreateInvitationForm
 from wishes.models import AvailableWishList, WishList, WishListInvitation
 
 if TYPE_CHECKING:
@@ -26,31 +27,39 @@ def _generate_code(length: int = 32) -> str:
 
 class CreateInvitation(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
-    http_method_names = ("post",)
 
     def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        user = request.user
-        wish_list = get_object_or_404(WishList, user=user)
-        code = _generate_code()
-        invention = WishListInvitation.objects.create(
-            invited_email=request.POST["email"],
-            wish_list=wish_list,
-            code_hash=hashlib.sha256(code.encode("UTF-8")).hexdigest(),
-        )
-        invention.save()
-        path = reverse(
-            "wishes:accept_invitation",
-            kwargs={"code": code},
-        )
-        invitation_url = request.build_absolute_uri(path)
-        return render(
-            request,
-            "wishes/invitations/created.html",
-            {
-                "invitation_url": invitation_url,
-                "recipient_email": invention.invited_email,
-            },
-        )
+        form = CreateInvitationForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            email = form.cleaned_data["invited_email"]
+            wish_list = get_object_or_404(WishList, user=user)
+
+            code = _generate_code()
+            invention = WishListInvitation.objects.create(
+                invited_email=email,
+                wish_list=wish_list,
+                code_hash=hashlib.sha256(code.encode("UTF-8")).hexdigest(),
+            )
+            invention.save()
+            path = reverse(
+                "wishes:accept_invitation",
+                kwargs={"code": code},
+            )
+            invitation_url = request.build_absolute_uri(path)
+            return render(
+                request,
+                "wishes/invitations/created.html",
+                {
+                    "invitation_url": invitation_url,
+                    "recipient_email": invention.invited_email,
+                },
+            )
+        return render(request, "wishes/invitations/create.html", {"form": form})
+
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+        form = CreateInvitationForm()
+        return render(request, "wishes/invitations/create.html", {"form": form})
 
 
 class AcceptInvitation(LoginRequiredMixin, View):
