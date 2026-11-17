@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
@@ -7,11 +7,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
+from django.views.generic.list import ListView
 
 from wishes.forms import CreateWishForm
 from wishes.models import AvailableWishList, Wish, WishList
 
 if TYPE_CHECKING:
+    from django.db.models import QuerySet
     from django.http.request import HttpRequest
 
     from users.models import User
@@ -20,22 +22,30 @@ if TYPE_CHECKING:
         user: User
 
 
-class GetWishList(LoginRequiredMixin, View):
+class GetWishList(LoginRequiredMixin, ListView):
     login_url = reverse_lazy("users:sign_in")
+    context_object_name = "wishes"
+    template_name = "wishes/wish_list.html"
 
-    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        wishes = Wish.objects.filter(wish_list__user=request.user)
-        show_fulfilled = request.GET.get("status") == "fulfilled"
-        return render(
-            request,
-            "wishes/wish_list.html",
-            {
-                "wishes": wishes.filter(fulfilled=show_fulfilled),
-                "show_fulfilled": show_fulfilled,
-                "active_count": wishes.filter(fulfilled=False).count(),
-                "fulfilled_count": wishes.filter(fulfilled=True).count(),
-            },
+    def get_queryset(self) -> QuerySet[Wish]:
+        show_fulfilled = self.request.GET.get("status") == "fulfilled"
+        return Wish.objects.filter(
+            wish_list__user=self.request.user,
+            fulfilled=show_fulfilled,
         )
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        all_wishes = Wish.objects.filter(
+            wish_list__user=self.request.user,
+        )
+
+        context["show_fulfilled"] = self.request.GET.get("status") == "fulfilled"
+        context["active_count"] = all_wishes.filter(fulfilled=False).count()
+        context["fulfilled_count"] = all_wishes.filter(fulfilled=True).count()
+
+        return context
 
 
 class CreateWish(LoginRequiredMixin, CreateView):
