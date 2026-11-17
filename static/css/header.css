@@ -50,12 +50,11 @@
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--text-muted);
-    border-bottom: 2px solid transparent;
 }
 
 .site-header__link--active {
     color: var(--accent);
-    border-bottom-color: var(--accent);
+    box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 .site-header__profile {
@@ -119,6 +118,15 @@
 }
 
 @media (max-width: 40rem) {
+    .site-header {
+        transition: transform 180ms ease-out;
+    }
+
+    .site-header--hidden {
+        transform: translateY(-100%);
+        pointer-events: none;
+    }
+
     .site-header__inner {
         grid-template-columns: 1fr auto;
         gap: 0;
@@ -156,5 +164,11 @@
     .site-header__sign-up {
         padding-inline: 0.5rem;
         font-size: 0.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header {
+        transition: none;
     }
 }
