@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Вишлист: {{ wish_list.user.first_name|default:wish_list.user.username }}{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/wishes.css' %}?v=compact-header-2"><link rel="stylesheet" href="{% static 'css/invitations.css' %}">{% endblock %}
 {% block content %}
     <div class="wishes wishes--wide">
         <a class="sharing-back" href="{% url 'wishes:shared_wishlists' %}">‹ Доступные мне</a>

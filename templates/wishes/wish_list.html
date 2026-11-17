@@ -4,12 +4,12 @@
 {% block title %}Мои желания{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/wishes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/wishes.css' %}?v=compact-header-2">
     <link rel="stylesheet" href="{% static 'css/invitations.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="wishes wishes--wide">
+    <div class="wishes wishes--wide wishes--compact-header">
         <header class="wishes__header">
             <h1 class="wishes__title">Мои желания</h1>
             <div class="wishes__header-actions">
@@ -18,21 +18,20 @@
             </div>
         </header>
 
-        <div class="sharing-access-strip">
-            <span class="sharing-access-strip__icon" aria-hidden="true">{% include "wishes/partials/lock_icon.html" %}</span>
-            <span>Закрытый вишлист</span>
-            <a href="/wishes/access/" aria-label="Управлять доступом к вишлисту">Доступ</a>
+        <div class="wishes__toolbar">
+            <nav class="wishes__filters" aria-label="Статус желаний">
+                <a href="{% url 'wishes:get_wish_list' %}" class="wishes__filter{% if not show_fulfilled %} wishes__filter--active{% endif %}"{% if not show_fulfilled %} aria-current="page"{% endif %}>
+                    В планах <span class="wishes__count">{{ active_count }}</span>
+                </a>
+                <a href="{% url 'wishes:get_wish_list' %}?status=fulfilled" class="wishes__filter wishes__filter--fulfilled{% if show_fulfilled %} wishes__filter--active{% endif %}"{% if show_fulfilled %} aria-current="page"{% endif %}>
+                    Исполнено <span class="wishes__count">{{ fulfilled_count }}</span>
+                </a>
+            </nav>
+            <a class="wishes__access" href="{% url 'wishes:manage_access' %}" aria-label="Закрытый вишлист: управлять доступом" title="Закрытый вишлист">
+                <span class="sharing-access-strip__icon" aria-hidden="true">{% include "wishes/partials/lock_icon.html" %}</span>
+                Доступ
+            </a>
         </div>
-
-        <nav class="wishes__filters" aria-label="Статус желаний">
-            <a href="{% url 'wishes:get_wish_list' %}" class="wishes__filter{% if not show_fulfilled %} wishes__filter--active{% endif %}"{% if not show_fulfilled %} aria-current="page"{% endif %}>
-                В планах <span class="wishes__count">{{ active_count }}</span>
-            </a>
-            <a href="{% url 'wishes:get_wish_list' %}?status=fulfilled" class="wishes__filter wishes__filter--fulfilled{% if show_fulfilled %} wishes__filter--active{% endif %}"{% if show_fulfilled %} aria-current="page"{% endif %}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
-                Исполненные <span class="wishes__count">{{ fulfilled_count }}</span>
-            </a>
-        </nav>
 
         {% if wishes %}
             {% include "wishes/partials/wish_cards.html" %}
