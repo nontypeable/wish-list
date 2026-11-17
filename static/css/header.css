@@ -119,6 +119,15 @@
 }
 
 @media (max-width: 40rem) {
+    .site-header {
+        transition: transform 180ms ease-out;
+    }
+
+    .site-header--hidden {
+        transform: translateY(-100%);
+        pointer-events: none;
+    }
+
     .site-header__inner {
         grid-template-columns: 1fr auto;
         gap: 0;
@@ -156,5 +165,11 @@
     .site-header__sign-up {
         padding-inline: 0.5rem;
         font-size: 0.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header {
+        transition: none;
     }
 }
