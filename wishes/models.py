@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.query_utils import Q
 
@@ -57,6 +58,36 @@ class Wish(models.Model):
     @property
     def is_booked(self) -> bool:
         return self.who_booked is not None
+
+    def book(self, user: User) -> None:
+        if self.wish_list.user_id == user.pk:
+            raise ValidationError("Нельзя забронировать собственное желание.")
+
+        updated = (
+            type(self)
+            .objects.filter(
+                pk=self.pk,
+                fulfilled=False,
+                who_booked__isnull=True,
+            )
+            .update(who_booked=user)
+        )
+
+        if not updated:
+            raise ValidationError("Желание уже забронировано, исполнено или недоступно.")
+
+        self.who_booked = user
+
+    def unbook(self, user: User) -> None:
+        if self.wish_list.user_id == user.pk:
+            raise ValidationError("Нельзя отменить бронь собственного желания.")
+
+        updated = type(self).objects.filter(pk=self.pk, who_booked=user).update(who_booked=None)
+
+        if not updated:
+            raise ValidationError("Бронь желания уже отменена или недоступна.")
+
+        self.who_booked = None
 
 
 class WishListInvitation(models.Model):

@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -67,21 +68,38 @@ class FulfillWish(LoginRequiredMixin, View):
 class BookWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
-        selected_wish = Wish.objects.get(id=wish)
-        selected_wish.who_booked = request.user
-        selected_wish.save(update_fields=["who_booked"])
-        return redirect("wishes:open_other_wish_list", wish_list_id=selected_wish.wish_list_id)
+    def post(self, request: AuthenticatedHttpRequest, pk: int) -> HttpResponse:
+        try:
+            wish = Wish.objects.get(id=pk)
+            if not AvailableWishList.objects.filter(
+                user=request.user, wish_list_id=wish.wish_list_id
+            ).exists():
+                return HttpResponse(status=403)
+            wish.book(request.user)
+        except Wish.DoesNotExist:
+            return HttpResponse(status=404)
+        except ValidationError as exc:
+            return HttpResponse(" ".join(exc.messages), status=400)
+
+        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
 class UnBookWish(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
-    def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
-        selected_wish = Wish.objects.get(id=wish)
-        selected_wish.who_booked = None
-        selected_wish.save(update_fields=["who_booked"])
-        return redirect("wishes:open_other_wish_list", wish_list_id=selected_wish.wish_list_id)
+    def post(self, request: AuthenticatedHttpRequest, pk: int) -> HttpResponse:
+        try:
+            wish = Wish.objects.get(id=pk)
+            if not AvailableWishList.objects.filter(
+                user=request.user, wish_list_id=wish.wish_list_id
+            ).exists():
+                return HttpResponse(status=403)
+            wish.unbook(request.user)
+        except Wish.DoesNotExist:
+            return HttpResponse(status=404)
+        except ValidationError as exc:
+            return HttpResponse(" ".join(exc.messages), status=400)
+        return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
 class OpenWish(LoginRequiredMixin, View):
