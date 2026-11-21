@@ -115,26 +115,18 @@ class OpenWish(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Wish]:
         wish_list_pk = self.kwargs["wish_list_id"]
-        wish_list = get_object_or_404(WishList, id=wish_list_pk)
-        have_access = AvailableWishList.objects.filter(
-            wish_list=wish_list, user_id=self.request.user.id
-        )
-
-        if not have_access:
-            return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
-
         status = self.request.GET.get("status") == "fulfilled"
-        wishes = Wish.objects.filter(wish_list=wish_list, fulfilled=status)
+        wishes = Wish.objects.filter(wish_list__id=wish_list_pk, fulfilled=status)
         return wishes
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
         wish_list_pk = self.kwargs["wish_list_id"]
-        wish_list = get_object_or_404(WishList, id=wish_list_pk)
+        wish_list = WishList.objects.get(pk=wish_list_pk)
         status = self.request.GET.get("status") == "fulfilled"
-        active_count = (Wish.objects.filter(wish_list=wish_list, fulfilled=False).count(),)
-        fulfilled_count = (Wish.objects.filter(wish_list=wish_list, fulfilled=True).count(),)
+        active_count = (Wish.objects.filter(wish_list__id=wish_list_pk, fulfilled=False).count(),)
+        fulfilled_count = (Wish.objects.filter(wish_list__id=wish_list_pk, fulfilled=True).count(),)
 
         context["wish_list"] = wish_list
         context["show_fulfilled"] = status
