@@ -14,8 +14,9 @@ from pathlib import Path
 
 import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Source assets live in src; local configuration and data stay at the repository root.
+SOURCE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = SOURCE_DIR.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -75,7 +76,7 @@ ROOT_URLCONF = "wish_list_config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [SOURCE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -140,7 +141,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [SOURCE_DIR / "static"]
 STATIC_ROOT = Path(env("STATIC_ROOT", default=str(BASE_DIR / "staticfiles")))
 
 MEDIA_URL = "/media/"

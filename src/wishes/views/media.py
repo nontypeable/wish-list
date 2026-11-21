@@ -10,10 +10,10 @@ from django.views import View
 from wishes.models import Wish
 
 if TYPE_CHECKING:
-    from wishes.views.wishes import AuthenticatedHttpRequest
+    from wishes.views._types import AuthenticatedHttpRequest
 
 
-class WishImage(LoginRequiredMixin, View):
+class WishImageView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
     http_method_names = ("get", "head")
 

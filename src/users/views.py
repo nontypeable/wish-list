@@ -25,14 +25,14 @@ def _redirect_after_auth(request: HttpRequest) -> HttpResponse:
     return redirect("users:profile")
 
 
-class UserProfile(LoginRequiredMixin, View):
+class UserProfileView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request, "users/profile.html", {"user": request.user})
 
 
-class UserSignUp(View):
+class SignUpView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))
@@ -54,7 +54,7 @@ class UserSignUp(View):
         return render(request, "users/sign_up.html", {"form": form})
 
 
-class UserSignIn(View):
+class SignInView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("users:profile"))

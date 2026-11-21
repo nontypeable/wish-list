@@ -12,19 +12,15 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.14-slim AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    PYTHONPATH="/app/src"
 RUN groupadd --gid 10001 wish \
     && useradd --uid 10001 --gid wish --no-create-home wish \
     && mkdir -p /var/lib/wish/data /var/lib/wish/media /var/lib/wish/static \
     && chown -R wish:wish /var/lib/wish
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
-COPY manage.py ./
-COPY wish_list_config ./wish_list_config
-COPY users ./users
-COPY wishes ./wishes
-COPY templates ./templates
-COPY static ./static
+COPY src ./src
 COPY deploy ./deploy
 USER 10001:10001
 EXPOSE 8000

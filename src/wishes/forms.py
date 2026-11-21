@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django import forms
 
-from .models import Wish
+from .models import Wish, WishListInvitation
 
 if TYPE_CHECKING:
     BaseWishForm = forms.ModelForm[Wish]
@@ -27,3 +27,16 @@ class CreateWishForm(BaseWishForm):
             "price": "Цена",
             "where_can_buy": "Где можно купить",
         }
+
+
+if TYPE_CHECKING:
+    BaseCreateInvitationForm = forms.ModelForm[WishListInvitation]
+else:
+    BaseCreateInvitationForm = forms.ModelForm
+
+
+class CreateInvitationForm(BaseCreateInvitationForm):
+    class Meta:
+        model = WishListInvitation
+        fields: ClassVar[tuple[str, ...]] = ("invited_email",)
+        labels: ClassVar[dict[str, str]] = {"invited_email": "Электронная почта получателя"}

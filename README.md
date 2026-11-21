@@ -4,15 +4,23 @@
 
 - [uv](https://docs.astral.sh/uv/)
 
+## Структура
+
+```text
+src/                 # Django-приложения, manage.py, шаблоны и статика
+tests/               # Тесты
+deploy/              # Скрипты и настройки деплоя
+```
+
 ## Запуск
 
 ```bash
 uv sync
 uv run pre-commit install
 cp .env.example .env # Надо сгенерировать SECRET_KEY
-uv run python manage.py migrate
-uv run python manage.py createsuperuser
-uv run python manage.py runserver
+uv run python src/manage.py migrate
+uv run python src/manage.py createsuperuser
+uv run python src/manage.py runserver
 ```
 
 ## Проверки
@@ -20,7 +28,7 @@ uv run python manage.py runserver
 ```bash
 uv run pre-commit run --all-files
 uv run mypy .
-uv run python manage.py check
-uv run python manage.py makemigrations --check --dry-run
+uv run python src/manage.py check
+uv run python src/manage.py makemigrations --check --dry-run
 uv run pytest --cov
 ```
