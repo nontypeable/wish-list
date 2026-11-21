@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -114,9 +114,22 @@ class OpenWish(LoginRequiredMixin, ListView):
     template_name = "wishes/shared_wish_list.html"
 
     def get_queryset(self) -> QuerySet[Wish]:
-        wish_list_pk = self.kwargs["wish_list_id"]
+        self.wish_list = get_object_or_404(
+            WishList,
+            pk=self.kwargs["wish_list_id"],
+        )
+
+        is_owner = self.wish_list.user_id == self.request.user.pk
+        is_invited = AvailableWishList.objects.filter(
+            wish_list_id=self.wish_list.pk,
+            user_id=self.request.user.pk,
+        ).exists()
+
+        if not (is_owner or is_invited):
+            raise PermissionDenied("Нет доступа к этому вишлисту.")
+
         status = self.request.GET.get("status") == "fulfilled"
-        wishes = Wish.objects.filter(wish_list__id=wish_list_pk, fulfilled=status)
+        wishes = Wish.objects.filter(wish_list__id=self.wish_list.pk, fulfilled=status)
         return wishes
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
