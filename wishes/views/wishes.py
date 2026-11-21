@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView
@@ -107,33 +107,38 @@ class UnBookWish(LoginRequiredMixin, View):
         return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
-class OpenWish(LoginRequiredMixin, View):
+class OpenWish(LoginRequiredMixin, ListView):
     login_url = reverse_lazy("users:sign_in")
+    model = Wish
+    context_object_name = "wishes"
+    template_name = "wishes/shared_wish_list.html"
 
-    def get(self, request: AuthenticatedHttpRequest, wish_list_id: int) -> HttpResponse:
-        target_wish_list = get_object_or_404(WishList, pk=wish_list_id)
-        have_access = (
-            AvailableWishList.objects.filter(
-                wish_list=target_wish_list, user_id=request.user.id
-            ).exists()
-            or target_wish_list.user == request.user
+    def get_queryset(self) -> QuerySet[Wish]:
+        wish_list_pk = self.kwargs["wish_list_id"]
+        wish_list = get_object_or_404(WishList, id=wish_list_pk)
+        have_access = AvailableWishList.objects.filter(
+            wish_list=wish_list, user_id=self.request.user.id
         )
+
         if not have_access:
             return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
-        status = request.GET.get("status") == "fulfilled"
-        wishes = Wish.objects.filter(wish_list=target_wish_list, fulfilled=status)
-        return render(
-            request,
-            "wishes/shared_wish_list.html",
-            {
-                "wish_list": target_wish_list,
-                "wishes": wishes,
-                "show_fulfilled": status,
-                "active_count": Wish.objects.filter(
-                    wish_list=target_wish_list, fulfilled=False
-                ).count(),
-                "fulfilled_count": Wish.objects.filter(
-                    wish_list=target_wish_list, fulfilled=True
-                ).count(),
-            },
-        )
+
+        status = self.request.GET.get("status") == "fulfilled"
+        wishes = Wish.objects.filter(wish_list=wish_list, fulfilled=status)
+        return wishes
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        wish_list_pk = self.kwargs["wish_list_id"]
+        wish_list = get_object_or_404(WishList, id=wish_list_pk)
+        status = self.request.GET.get("status") == "fulfilled"
+        active_count = (Wish.objects.filter(wish_list=wish_list, fulfilled=False).count(),)
+        fulfilled_count = (Wish.objects.filter(wish_list=wish_list, fulfilled=True).count(),)
+
+        context["wish_list"] = wish_list
+        context["show_fulfilled"] = status
+        context["active_count"] = active_count
+        context["fulfilled_count"] = fulfilled_count
+
+        return context
