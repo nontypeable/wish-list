@@ -15,8 +15,14 @@ if TYPE_CHECKING:
 
     from wishes.views._types import AuthenticatedHttpRequest
 
+    BaseWishCreateView = CreateView[Wish, CreateWishForm]
+else:
+    BaseWishCreateView = CreateView
 
-class WishCreateView(LoginRequiredMixin, CreateView):
+
+class WishCreateView(LoginRequiredMixin, BaseWishCreateView):
+    request: AuthenticatedHttpRequest
+
     model = Wish
     form_class = CreateWishForm
     login_url = reverse_lazy("users:sign_in")
@@ -24,7 +30,7 @@ class WishCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("wishes:get_wish_list")
 
     def form_valid(self, form: CreateWishForm) -> HttpResponse:
-        form.instance.wish_list = WishList.objects.get(user=form.instance.user)
+        form.instance.wish_list = WishList.objects.get(user=self.request.user)
         return super().form_valid(form)
 
 

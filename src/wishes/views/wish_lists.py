@@ -16,8 +16,14 @@ if TYPE_CHECKING:
 
     from wishes.views._types import AuthenticatedHttpRequest
 
+    BaseWishListView = ListView[Wish]
+else:
+    BaseWishListView = ListView
 
-class MyWishListView(LoginRequiredMixin, ListView):
+
+class MyWishListView(LoginRequiredMixin, BaseWishListView):
+    request: AuthenticatedHttpRequest
+
     login_url = reverse_lazy("users:sign_in")
     context_object_name = "wishes"
     template_name = "wishes/wish_list.html"
@@ -43,7 +49,9 @@ class MyWishListView(LoginRequiredMixin, ListView):
         return context
 
 
-class SharedWishListView(LoginRequiredMixin, ListView):
+class SharedWishListView(LoginRequiredMixin, BaseWishListView):
+    request: AuthenticatedHttpRequest
+
     login_url = reverse_lazy("users:sign_in")
     model = Wish
     context_object_name = "wishes"
