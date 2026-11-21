@@ -10,7 +10,7 @@ from django.views import View
 from wishes.models import Wish
 
 if TYPE_CHECKING:
-    from wishes.views.wishes import AuthenticatedHttpRequest
+    from wishes.views._types import AuthenticatedHttpRequest
 
 
 class WishImageView(LoginRequiredMixin, View):

@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -14,11 +14,9 @@ from wishes.forms import CreateInvitationForm
 from wishes.models import AvailableWishList, WishList, WishListInvitation
 
 if TYPE_CHECKING:
-    from django.http.request import HttpRequest
     from django.http.response import HttpResponse
 
-    class AuthenticatedHttpRequest(HttpRequest):
-        user: User
+    from wishes.views._types import AuthenticatedHttpRequest
 
 
 def _generate_code(length: int = 32) -> str:
@@ -117,53 +115,3 @@ class InvitationAcceptView(LoginRequiredMixin, View):
                 "can_accept": True,
             },
         )
-
-
-class AccessibleWishListsView(LoginRequiredMixin, View):
-    login_url = reverse_lazy("users:sign_in")
-
-    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        wish_lists = (
-            WishList.objects.filter(accesses__user=request.user).select_related("user").distinct()
-        )
-        return render(
-            request,
-            "wishes/available_wish_lists.html",
-            {"shared_wish_lists": wish_lists},
-        )
-
-    post = get
-    put = get
-    patch = get
-    delete = get
-    trace = get
-
-    def options(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return self.get(cast("AuthenticatedHttpRequest", request))
-
-
-class WishListAccessView(LoginRequiredMixin, View):
-    login_url = reverse_lazy("users:sign_in")
-
-    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        accesses = AvailableWishList.objects.filter(wish_list=request.user.wishlist)
-        pending_accesses = WishListInvitation.objects.filter(
-            wish_list=request.user.wishlist, accepted_at__isnull=True
-        )
-        return render(
-            request,
-            "wishes/invitations/manage.html",
-            {"accesses": accesses, "pending_invitations": pending_accesses},
-        )
-
-    def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
-        return render(request, "wishes/invitations/manage.html")
-
-    head = post
-    put = post
-    patch = post
-    delete = post
-    trace = post
-
-    def options(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return self.post(cast("AuthenticatedHttpRequest", request))
