@@ -22,7 +22,7 @@ if TYPE_CHECKING:
         user: User
 
 
-class GetWishList(LoginRequiredMixin, ListView):
+class MyWishListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy("users:sign_in")
     context_object_name = "wishes"
     template_name = "wishes/wish_list.html"
@@ -48,7 +48,7 @@ class GetWishList(LoginRequiredMixin, ListView):
         return context
 
 
-class CreateWish(LoginRequiredMixin, CreateView):
+class WishCreateView(LoginRequiredMixin, CreateView):
     model = Wish
     form_class = CreateWishForm
     login_url = reverse_lazy("users:sign_in")
@@ -60,7 +60,7 @@ class CreateWish(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class FulfillWish(LoginRequiredMixin, View):
+class WishFulfillView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest, wish: int) -> HttpResponse:
@@ -70,7 +70,7 @@ class FulfillWish(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse_lazy("wishes:get_wish_list"))
 
 
-class BookWish(LoginRequiredMixin, View):
+class WishBookView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest, pk: int) -> HttpResponse:
@@ -89,7 +89,7 @@ class BookWish(LoginRequiredMixin, View):
         return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
-class UnBookWish(LoginRequiredMixin, View):
+class WishUnbookView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest, pk: int) -> HttpResponse:
@@ -107,7 +107,7 @@ class UnBookWish(LoginRequiredMixin, View):
         return redirect("wishes:open_other_wish_list", wish_list_id=wish.wish_list_id)
 
 
-class OpenWish(LoginRequiredMixin, ListView):
+class SharedWishListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy("users:sign_in")
     model = Wish
     context_object_name = "wishes"

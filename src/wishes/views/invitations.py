@@ -25,7 +25,7 @@ def _generate_code(length: int = 32) -> str:
     return secrets.token_urlsafe(length)
 
 
-class CreateInvitation(LoginRequiredMixin, View):
+class InvitationCreateView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def post(self, request: AuthenticatedHttpRequest) -> HttpResponse:
@@ -62,7 +62,7 @@ class CreateInvitation(LoginRequiredMixin, View):
         return render(request, "wishes/invitations/create.html", {"form": form})
 
 
-class AcceptInvitation(LoginRequiredMixin, View):
+class InvitationAcceptView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
     http_method_names = ("get", "post")
 
@@ -119,7 +119,7 @@ class AcceptInvitation(LoginRequiredMixin, View):
         )
 
 
-class GetAcceptedWishLists(LoginRequiredMixin, View):
+class AccessibleWishListsView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
@@ -142,7 +142,7 @@ class GetAcceptedWishLists(LoginRequiredMixin, View):
         return self.get(cast("AuthenticatedHttpRequest", request))
 
 
-class ManageAccess(LoginRequiredMixin, View):
+class WishListAccessView(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:sign_in")
 
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
