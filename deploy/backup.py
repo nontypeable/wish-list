@@ -10,7 +10,7 @@ from pathlib import Path
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wish_list_config.settings")
 # Script is invoked as `python deploy/backup.py` from /app.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 import django
 from django.conf import settings
