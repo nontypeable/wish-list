@@ -1,13 +1,13 @@
 import hashlib
 import secrets
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.views import View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 
 from users.models import User
@@ -56,31 +56,30 @@ class InvitationCreateView(LoginRequiredMixin, BaseInvitationCreateView):
         )
 
 
-class InvitationAcceptView(LoginRequiredMixin, View):
+class InvitationAcceptView(LoginRequiredMixin, TemplateView):
+    request: AuthenticatedHttpRequest
+
     login_url = reverse_lazy("users:sign_in")
-    http_method_names = ("get", "post")
+    template_name = "wishes/invitations/accept.html"
 
-    def get(self, request: AuthenticatedHttpRequest, code: str) -> HttpResponse:
-        user = request.user
-        invite = get_object_or_404(
-            WishListInvitation.objects.select_related("wish_list__user"),
-            invited_email=user.email,
-            code_hash=hashlib.sha256(code.encode("UTF-8")).hexdigest(),
-        )
-        access = AvailableWishList.objects.filter(wish_list=invite.wish_list, user=user)
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
 
-        owner = invite.wish_list.user
-        return render(
-            request,
-            "wishes/invitations/accept.html",
-            {
-                "inviter_name": owner.first_name or owner.username,
-                "recipient_email": invite.invited_email,
-                "invitation_path": request.path,
-                "has_access": access.exists(),
-                "can_accept": True,
-            },
+        invite = WishListInvitation.objects.get(
+            invited_email=self.request.user.email,
+            code_hash=hashlib.sha256(kwargs["code"].encode("UTF-8")).hexdigest(),
         )
+        access = AvailableWishList.objects.filter(
+            wish_list=invite.wish_list, user=self.request.user
+        )
+
+        context["inviter_name"] = invite.wish_list.user.first_name or invite.wish_list.user.username
+        context["recipient_email"] = invite.invited_email
+        context["invitation_path"] = self.request.path
+        context["has_access"] = access.exists()
+        context["can_accept"] = True
+
+        return context
 
     def post(self, request: AuthenticatedHttpRequest, code: str) -> HttpResponse:
         user = request.user
